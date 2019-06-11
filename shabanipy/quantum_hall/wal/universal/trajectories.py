@@ -30,21 +30,13 @@ Point = namedtuple('Point', ['x', 'y'])
 def check_return_condition(point: tuple,
                            next_point: tuple,
                            distance: float) -> bool:
-    """Check if the particle returned to the origin.
-
-    """
-    l2 = (point.x - next_point.x)**2 + (point.y - next_point.y)**2
-    if (l2 == 0.0):
-        return sqrt(point.x**2 + point.y**2) < distance
-    # Consider the line extending the segment, parameterized as v + t (w - v).
-    # We find projection of the origin p onto the line.
-    # It falls where t = [(p-v) . (w-v)] / |w-v|^2
-    # We clamp t from [0,1] to handle points outside the segment vw.
-    t = max(0, min(1, - (point.x*(next_point.x - point.x) +
-                         point.y*(next_point.y - point.y) / l2)))
-    # projection = v + t * (w - v) falls on the segment
-    return (sqrt((point.x + t*(next_point.x - point.x))**2 +
-                 (point.y + t*(next_point.y - point.y))**2) < distance)
+    dx = point.x - next_point.x
+    dy = point.y - next_point.y
+    #calculate the distance that the point move
+    l_c = (next_point.y / dy - next_point.x / dx)**2
+    l_ab = (1 / dx)**2 + (1 / dy)**2
+    #use the fomula of the distance of point(0, 0) to the line Ax+By+C=0
+    return  sqrt(l_c / l_ab) < distance
 
 
 @njit
@@ -66,7 +58,7 @@ def identify_trajectory(seed: int, n_scat_max: int, distance: float) -> int:
     # First scattering
     r, state = ran1(state)
     x = old_x = - log(r)
-    y = old_y = 0
+    y = old_y = 0.0
     i = 1
 
     while i <= n_scat_max:

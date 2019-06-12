@@ -30,6 +30,19 @@ Point = namedtuple('Point', ['x', 'y'])
 def check_return_condition(point: tuple,
                            next_point: tuple,
                            distance: float) -> bool:
+    """ check if the particle return to the origin
+
+    Parameters
+    ----------
+    point: tuple
+        initial position
+    next_point: tuple
+        terminal position
+    distance: float
+        Distance below which we consider the particle returned to the origin.
+        
+    """
+
     dx = point.x - next_point.x
     dy = point.y - next_point.y
     #calculate the distance that the point move
@@ -81,6 +94,18 @@ def identify_trajectory(seed: int, n_scat_max: int, distance: float) -> int:
 def generate_trajectory(seed: int, n_scat: int) -> np.ndarray:
     """Generate a trajectory containing a known number of points.
 
+    Parameters
+    ----------
+    seed : int
+        Seed for the random generator.
+    n_scat : int
+
+    Returns
+    -------
+    trajectories :
+        (2, n_scat) array. First line is x at each scattering event,
+        second line is y.
+
     """
     trajectory = np.zeros((n_scat+1, 2))
     state = seed_ran1(seed)
@@ -102,4 +127,4 @@ def generate_trajectory(seed: int, n_scat: int) -> np.ndarray:
         trajectory[i, 0] = x
         trajectory[i, 1] = y
 
-    return trajectory
+    return trajectory.T

@@ -8,9 +8,15 @@ def find_each_length(x: np.ndarray, y: np.ndarray) -> np.ndarray:
 
     Parameters
     ----------
+    x: np.ndarray
+        (1, n_scat) array, the x position of each point
+    y: np.ndarray
+        (1, n_scat) array, the y position of each point
 
     Returns
-    -------
+    ----------
+    length
+        (1, n_scat) array, length of each segment
 
     """
 
@@ -24,18 +30,50 @@ def find_each_length(x: np.ndarray, y: np.ndarray) -> np.ndarray:
 
 @njit
 def find_each_angle(x: np.ndarray, y: np.ndarray) -> np.ndarray:
-    #find the angle of each segment to the x-axis
+    """Find the angle of each segment.
+
+    Parameters
+    ----------
+    x: np.ndarray
+        (1, n_scat) array, the x position of each point
+    y: np.ndarray
+        (1, n_scat) array, the y position of each point
+
+    Returns
+    ----------
+    angle
+        (1, n_scat) array, angle of each segment
+
+    """
+
 
     angle = []
 
-    # np.atan2(y, x)
     for i in range(1, len(x)):
         angle_a = atan2((y[i] - y[i - 1]), (x[i] - x[i - 1]))
         angle.append(angle_a)
 
     return angle
 
-def find_trace(l: np.ndarray, angle: np.ndarray, theta_R: float) -> complex:
+def find_trace(l: np.ndarray, angle: np.ndarray, theta_R: float) -> float:
+    """Find the trace of the matrix R_tot^2
+
+    Parameters
+    ----------
+    l: np.ndarray
+        (1, n_scat) array, length of each segment
+    angle: np.ndarray
+        (1, n_scat) array, angle of each segment
+    theta_R: float
+        the spin rotation angle per the MFP length
+
+    Returns
+    -----------
+    trace: float
+        The trace of the matrix R_tot^2
+
+        
+    """
 
     A = np.array([[1, 0], [0, 1]], dtype = complex)
 

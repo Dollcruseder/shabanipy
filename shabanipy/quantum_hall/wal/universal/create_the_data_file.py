@@ -1,10 +1,6 @@
 import h5py
-import numpy as np
-from numpy import *
-import pandas as pd
 from trajectories import generate_trajectory
 from trajectory_parameter import *
-from math import sqrt
 
 #n1 = 1
 #n2 = 100

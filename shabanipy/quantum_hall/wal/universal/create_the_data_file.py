@@ -2,6 +2,18 @@ import h5py
 from trajectories import generate_trajectory
 from trajectory_parameter import *
 
+"""
+Create a data file that contains these information of all 147885 orbitals:
+    trajectories
+    leng of each segment
+    angle of each segment
+    Total length, scatting number
+    seed
+    surface
+    cos of the azimuthal angle for the returning electron
+
+
+"""
 #n1 = 1
 #n2 = 100
 #f1 = h5py.File(f"cal_n({n1}-{n2})_data.hdf5", "w")

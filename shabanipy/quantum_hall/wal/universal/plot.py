@@ -3,16 +3,16 @@ from magnetoconductivity import MC
 import numpy as np
 from math import pow, pi
 
+L_phi = 10
 fig = plt.figure()
 ax = fig.add_subplot(111)
-ax.set(xlim=[-2, 1], title=r'$L_\phi = 10$',
-       ylabel=r'$\sigma / (2e^2 / h)$', xlabel='$log(B/B_t)$')
+ax.set(xlim=[-2, 1], title=rf'$L_\phi = {L_phi}$',
+       ylabel=r'$\Delta\sigma / (2e^2 / h)$', xlabel='$log(B/B_t)$')
 n_s = np.arange(3, 5001)
 F = np.sum(1 / (n_s - 2))
 
 for theta_R in [0, 1, 2, 4, 8]:
     x = np.linspace(-2, 1, 301)
-    L_phi = 10
     y = []
 
     for i in range(0, len(x)):

@@ -19,14 +19,7 @@ def find_each_length(x: np.ndarray, y: np.ndarray) -> np.ndarray:
         (1, n_scat) array, length of each segment
 
     """
-
-    length = []
-
-    for i in range(1, len(x)):
-        d = sqrt((x[i] - x[i - 1])**2 + (y[i] - y[i - 1])**2)
-        length.append(d)
-
-    return length
+    return np.sqrt((y[1:] - y[:-1])**2 + (x[1:] - x[:-1])**2)
 
 @njit
 def find_each_angle(x: np.ndarray, y: np.ndarray) -> np.ndarray:
@@ -45,25 +38,18 @@ def find_each_angle(x: np.ndarray, y: np.ndarray) -> np.ndarray:
         (1, n_scat) array, angle of each segment
 
     """
+    return np.atan2((y[1:] - y[:-1]), (x[1:] - x[:-1]))
 
-
-    angle = []
-
-    for i in range(1, len(x)):
-        angle_a = atan2((y[i] - y[i - 1]), (x[i] - x[i - 1]))
-        angle.append(angle_a)
-
-    return angle
-
+@njit
 def find_trace(l: np.ndarray, angle: np.ndarray, theta_R: float) -> float:
     """Find the trace of the matrix R_tot^2
 
     Parameters
     ----------
     l: np.ndarray
-        (1, n_scat) array, length of each segment
+        (n_scat) array, length of each segment
     angle: np.ndarray
-        (1, n_scat) array, angle of each segment
+        (n_scat) array, angle of each segment
     theta_R: float
         the spin rotation angle per the MFP length
 
@@ -72,17 +58,22 @@ def find_trace(l: np.ndarray, angle: np.ndarray, theta_R: float) -> float:
     trace: float
         The trace of the matrix R_tot^2
 
-        
+
     """
+    rotations = np.empty((len(l), 2, 2), dtype=np.complex128)
+    theta = theta_R*l
+    c_theta = np.cos(0.5*theta)
+    s_theta = np.sin(0.5*theta)
+    c_phi = np.cos(angle)
+    s_phi = np.sin(angle)
+    rotations[:, 0, 0] = c_theta
+    rotations[:, 0, 1] = -1j * (c_phi - 1j*s_phi)*s_theta
+    rotations[:, 1, 0] = -1j * (c_phi + 1j*s_phi)*s_theta
+    rotations[:, 1, 1] = c_theta
 
-    A = np.array([[1, 0], [0, 1]], dtype = complex)
-
+    cw_rot = np.array([[1, 0], [0, 1]], dtype=np.complex128)
     for i in range(0, len(l)):
-        theta = l[i] * theta_R
-        k1 = cos(angle[i]) + 1j * sin(angle[i])
-        k2 = cos(angle[i]) - 1j * sin(angle[i])
-        a1 = np.array([[cos(theta/2), k2 * sin(theta/2)], [k1 * sin(theta/2), cos(theta/2)]], dtype = complex)
-        A = np.dot(a1, A)
+        cw_rot = rotations[i] @ cw_rot
 
-    T = np.trace(np.dot(A, A))
-    return T.real
+
+    return np.trace(cw_rot @ cw_rot).real

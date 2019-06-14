@@ -1,23 +1,20 @@
 import h5py
-from math import *
+from math import exp, cos, pi
+import numpy as np
 
-f = h5py.File("useful_data.hdf5","r")
+def MC(x: float, L_phi: float, theta_R: int) -> float:
+    f1 = h5py.File("useful_data.hdf5", "r")
+    f2 = h5py.File("trace_data.hdf5", "r")
 
-B = 0
-L_phi = 10
-Sum = 0
+    Sum = 0
 
-S = f["Surface"][:]
-L = f["Length"][:]
-cosj = f["cosj'"][:]
-T = f["Trace"][:]
+    S = f1["Surface"][:]
+    L = f1["Length"][:]
+    cosj = f1["cosj'"][:]
+    #T = f2[f"theta={theta_R * 0.25}pi"][:]
+    T = f2[f"theta={theta_R * 0.25}pi"][:]
 
+    xj = np.exp(- L / L_phi) * 0.5 * T * (1 + cosj)
+    a = xj * np.cos(x * S)
 
-for i in range(0, len(S)):
-
-    xj = exp(- L[i] / L_phi) * 0.5 * T[i].real * (1 + cosj[i])
-    a = xj * cos(B * S[i])
-    Sum = Sum + a
-
-
-print(Sum / len(S))
+    return np.sum(a) / len(S)

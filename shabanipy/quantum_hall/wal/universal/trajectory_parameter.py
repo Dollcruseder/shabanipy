@@ -38,7 +38,7 @@ def find_each_angle(x: np.ndarray, y: np.ndarray) -> np.ndarray:
         (1, n_scat) array, angle of each segment
 
     """
-    return np.atan2((y[1:] - y[:-1]), (x[1:] - x[:-1]))
+    return np.arctan2((y[1:] - y[:-1]), (x[1:] - x[:-1]))
 
 @njit
 def find_trace(l: np.ndarray, angle: np.ndarray, theta_R: float) -> float:
@@ -67,8 +67,8 @@ def find_trace(l: np.ndarray, angle: np.ndarray, theta_R: float) -> float:
     c_phi = np.cos(angle)
     s_phi = np.sin(angle)
     rotations[:, 0, 0] = c_theta
-    rotations[:, 0, 1] = -1j * (c_phi - 1j*s_phi)*s_theta
-    rotations[:, 1, 0] = -1j * (c_phi + 1j*s_phi)*s_theta
+    rotations[:, 0, 1] =  (c_phi - 1j*s_phi)*s_theta
+    rotations[:, 1, 0] =  - (c_phi + 1j*s_phi)*s_theta
     rotations[:, 1, 1] = c_theta
 
     cw_rot = np.array([[1, 0], [0, 1]], dtype=np.complex128)

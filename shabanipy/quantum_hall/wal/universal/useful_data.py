@@ -1,38 +1,46 @@
+import pandas as pd
 import h5py
-from math import *
-
-f1 = h5py.File("cal_data.hdf5", "r")
-
-N_orbit = 147885
-S = []
-L = []
-cosj = []
-T = []
-
-for n in range(1, N_orbit + 1):
-
-    S_a = f1[f"n={n}"].attrs["Surface"]
-    S.append(S_a)
-
-    L_a = f1[f"n={n}"].attrs["Length"]
-    L.append(L_a)
-
-    cosj_a = f1[f"n={n}"].attrs["cosj'"]
-    cosj.append(cosj_a)
-
-    T_a = f1[f"n={n}"].attrs["trace"]
-    T.append(T_a)
+from trajectories import generate_trajectory, identify_trajectory
+from trajectory_parameter import *
 
 f2 = h5py.File("useful_data.hdf5", "w")
+f1 = open('paper_data.txt','r')
 
-dset1 = f2.create_dataset("Surface", (len(S),))
-dset1[...] = S
+dt = pd.read_csv(f1, delim_whitespace = True)
 
-dset2 = f2.create_dataset("Length", (len(L),))
-dset2[...] = L
+number = dt['n']
+seed = dt['seed']
+n_scat = dt['n_scat']
+L = dt['L']
+S = dt['S']
+cosj = dt["cosj'"]
 
-dset3 = f2.create_dataset("cosj'", (len(cosj),))
-dset3[...] = cosj
+S_new = []
+L_new = []
+cosj_new = []
 
-dset4 = f2.create_dataset("Trace", (len(T),), dtype = complex)
-dset4[...] = T
+n_scat_max = 5000
+d = 2.5e-5
+
+n_scat_cal = np.empty(len(number), dtype=np.int)
+
+k = 0
+for i in range(0, len(number)):
+
+    n_scat_cal[i] = identify_trajectory(seed[i], n_scat_max, d)
+    if n_scat_cal[i] == n_scat[i]:
+        S_new.append(S[i])
+        L_new.append(L[i])
+        cosj_new.append(cosj[i])
+        k += 1
+
+print(k)
+
+dset1 = f2.create_dataset("Surface", (len(S_new),))
+dset1[...] = S_new
+
+dset2 = f2.create_dataset("Length", (len(L_new),))
+dset2[...] = L_new
+
+dset3 = f2.create_dataset("cosj'", (len(cosj_new),))
+dset3[...] = cosj_new

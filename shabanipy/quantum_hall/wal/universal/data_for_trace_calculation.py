@@ -1,6 +1,8 @@
 import h5py
-from trajectories import generate_trajectory
+from trajectories import generate_trajectory, identify_trajectory
 from trajectory_parameter import find_each_length, find_each_angle
+import numpy as np
+
 
 """
 
@@ -15,22 +17,38 @@ number = f2["n"][:]
 seed = f2["seed"][:]
 n_scat = f2["n_scat"][:]
 
+n_scat_max = 5000
+d = 2.5e-5
+n_scat_cal = np.empty(len(number), dtype=np.int)
+k = 0
+j = 0
 
 for i in range(0, len(number)):
 
-    g1 = f1.create_group(f"n={i + 1}")
+    n_scat_cal[i] = identify_trajectory(seed[i], n_scat_max, d)
+    if n_scat_cal[i] == n_scat[i]:
 
-    tj = generate_trajectory(seed[i], n_scat[i])
-    x = tj[0]
-    y = tj[1]
-    x[-1] = 0
-    y[-1] = 0
+        g1 = f1.create_group(f"n={k}")
 
-    l = find_each_length(x, y)
-    angle = find_each_angle(x, y)
+        tj = generate_trajectory(seed[i], n_scat[i])
+        x = tj[0]
+        y = tj[1]
+        x[-1] = 0
+        y[-1] = 0
 
-    dset = g1.create_dataset("l", (len(l),))
-    dset[...] = l
+        l = find_each_length(x, y)
+        angle = find_each_angle(x, y)
 
-    dset = g1.create_dataset("angle", (len(angle),))
-    dset[...] = angle
+        dset = g1.create_dataset("l", (len(l),))
+        dset[...] = l
+
+        dset = g1.create_dataset("angle", (len(angle),))
+        dset[...] = angle
+
+        k += 1
+    else:
+        j += 1
+
+
+print(k)
+print(j)

@@ -85,7 +85,7 @@ def ran1(state: Ran1State) -> (float, Ran1State):
     j = int(iy /NDIV)
     iy = iv[j]
     iv[j] = seed
-    temp = RNMX if AM*iy > RNMX else AM*iy
+    temp = np.float64(np.float32(RNMX)) if AM*iy > RNMX else AM*iy
     return temp, Ran1State(seed, iy, iv)
 
 
@@ -94,4 +94,3 @@ if __name__ == '__main__':
     for i in range(3):
         value, state = ran1(state)
         print(value)
-

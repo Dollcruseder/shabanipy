@@ -40,16 +40,21 @@ def check_return_condition(point: tuple,
         terminal position
     distance: float
         Distance below which we consider the particle returned to the origin.
-        
+
     """
 
     dx = point.x - next_point.x
     dy = point.y - next_point.y
     #calculate the distance that the point move
-    l_c = (next_point.y / dy - next_point.x / dx)**2
-    l_ab = (1 / dx)**2 + (1 / dy)**2
-    #use the fomula of the distance of point(0, 0) to the line Ax+By+C=0
-    return  sqrt(l_c / l_ab) < distance
+    if ((point.x * dx + point.y * dy) * (next_point.x * dx + next_point.y * dy)) < 0.0 :
+        l_c = (next_point.y / dy - next_point.x / dx)**2
+        l_ab = (1 / dx)**2 + (1 / dy)**2
+        #use the fomula of the distance of point(0, 0) to the line Ax+By+C=0
+        return  sqrt(l_c / l_ab) < distance
+    else:
+        return min(sqrt(point.x ** 2 + point.y ** 2),
+                   sqrt(next_point.x ** 2 + next_point.y ** 2)) < distance
+
 
 
 @njit
@@ -81,9 +86,10 @@ def identify_trajectory(seed: int, n_scat_max: int, distance: float) -> int:
         theta = 2*pi*r
         x += length*cos(theta)
         y += length*sin(theta)
-        if check_return_condition(Point(old_x, old_y), Point(x, y), distance):
-            break
         i += 1
+        if i > 2 and check_return_condition(Point(old_x, old_y), Point(x, y), distance):
+            break
+
         old_x = x
         old_y = y
 

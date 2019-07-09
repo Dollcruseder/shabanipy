@@ -1,9 +1,11 @@
-from numba import njit
+from numba import njit, prange
 import numpy as np
+from math import exp, cos, pi
+from shabanipy.quantum_hall.wal.universal.create_data_file import get_trace_data, get_data
 
-
-@njit
-def find_trace(l: np.ndarray, angle: np.ndarray, alpha: float, beta3: float, beta1: float, k: float, hvf: float) -> float:
+@njit(fastmath=True)
+def find_trace(l: np.ndarray, angle: np.ndarray, alpha: float, beta3: float,
+               beta1: float, k: float, hvf: float) -> float:
     """Find the trace of the matrix R_tot^2
 
     Parameters
@@ -28,9 +30,7 @@ def find_trace(l: np.ndarray, angle: np.ndarray, alpha: float, beta3: float, bet
     trace: float
         The trace of the matrix R_tot^2
 
-
     """
-
     rotations = np.empty((len(l), 2, 2), dtype=np.complex128)
 
     c_phi = np.cos(angle)
@@ -45,8 +45,14 @@ def find_trace(l: np.ndarray, angle: np.ndarray, alpha: float, beta3: float, bet
     c_theta = np.cos(0.5*theta)
     s_theta = np.sin(0.5*theta)
 
-    psi1 = -1j * (B_x / B + 1j * B_y /B)
-    psi2 = -1j * (B_x / B - 1j * B_y /B)
+    psi1 = np.empty(len(l), dtype=np.complex128)
+    psi2 = np.empty(len(l), dtype=np.complex128)
+    for i, (b, bx, by) in enumerate(zip(B, B_x, B_y)):
+        if b != 0:
+            psi1[i] = -1j * (bx / b + 1j * by /b)
+            psi2[i] = -1j * (bx / b - 1j * by /b)
+        else:
+            psi1[i] = psi2[i] = 0
 
     rotations[:, 0, 0] = c_theta
     rotations[:, 0, 1] = psi1 * s_theta
@@ -57,5 +63,40 @@ def find_trace(l: np.ndarray, angle: np.ndarray, alpha: float, beta3: float, bet
     for i in range(0, len(l)):
         cw_rot = rotations[i] @ cw_rot
 
-
     return np.trace(cw_rot @ cw_rot).real
+
+
+
+@njit(parallel=True)
+def compute_traces(index, l, angle, alpha, beta1, beta3, k, hvf, N_orbit):
+    """
+    """
+    T = np.empty(N_orbit)
+    return_angle = np.empty(N_orbit)
+
+    for n in prange(N_orbit//1000):
+        for i in range(1000):
+            traj_id = n*1000 + i
+            if traj_id >= N_orbit:
+                break
+            begin, end = index[traj_id]
+            T_a = find_trace(l[begin:end], angle[begin:end],
+                             alpha, beta3, beta1, k, hvf)
+            T[traj_id] = T_a
+            return_angle[traj_id] = angle[end-1]
+
+    return T, return_angle
+
+
+def MC(x: float, L_phi: float, alpha: float, beta1: float, beta3: float, N_orbit: int, k: float, hvf: float) -> float:
+
+    T, angle = get_trace_data(alpha, beta1, beta3, N_orbit, k, hvf)
+    f = get_data("data_for_MC_cal")
+    S = f["Surface"][:len(T)]
+    L = f["Length"][:len(T)]
+    cosj = np.cos(angle)
+
+    xj = np.exp(- L / L_phi) * 0.5 * T * (1 + cosj)
+    a = xj * np.cos(x * S)
+
+    return np.sum(a) / len(T)

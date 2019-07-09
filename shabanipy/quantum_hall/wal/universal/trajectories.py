@@ -20,7 +20,7 @@ from math import sqrt, log, cos, sin, pi
 import numpy as np
 from numba import njit
 
-from random_number_generator import seed_ran1, ran1
+from shabanipy.quantum_hall.wal.universal.random_number_generator import seed_ran1, ran1
 
 
 Point = namedtuple('Point', ['x', 'y'])

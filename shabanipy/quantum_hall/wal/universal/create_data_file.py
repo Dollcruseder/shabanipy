@@ -94,11 +94,11 @@ def create_data_for_trace_cal():
 
             l = find_each_length(x, y)
             angle = find_each_angle(x, y) + random.uniform(0, 2 * pi)
-
+            #angle = find_each_angle(x, y)
             L.extend(l)
             A.extend(angle)
-            index.append((i, i +len(l)))
-            i += len(l)
+            index.append((j, j +len(l)))
+            j += len(l)
 
     dset1 = f1.create_dataset("l", (len(L),))
     dset1[...] = L

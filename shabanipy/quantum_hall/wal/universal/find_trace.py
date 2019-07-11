@@ -1,6 +1,18 @@
-from numba import njit, prange
+# -*- coding: utf-8 -*-
+# -----------------------------------------------------------------------------
+# Copyright 2019 by ShabaniPy Authors, see AUTHORS for more details.
+#
+# Distributed under the terms of the MIT license.
+#
+# The full license is in the file LICENCE, distributed with this software.
+# -----------------------------------------------------------------------------
+"""Routines to compute the trace of evolution matrix
+
+"""
+from math import cos, exp, pi
+
 import numpy as np
-from math import exp, cos, pi
+from numba import njit, prange
 
 
 @njit(fastmath=True)
@@ -31,6 +43,8 @@ def find_trace(l: np.ndarray, angle: np.ndarray, alpha: float, beta3: float,
         The trace of the matrix R_tot^2
 
     """
+    # XXX all of this could be moved outside of this function this the
+    # allocations may not play well with prange
     rotations = np.empty((len(l), 2, 2), dtype=np.complex128)
 
     c_phi = np.cos(angle)
@@ -59,17 +73,59 @@ def find_trace(l: np.ndarray, angle: np.ndarray, alpha: float, beta3: float,
     rotations[:, 1, 0] = psi2 * s_theta
     rotations[:, 1, 1] = c_theta
 
+    # For 2x2 matrices calling BLAS matrix multiplication has a large overhead
+    # and the need to allocate the output matrix is likely to cause issue with
+    # parallelization of the code.
     cw_rot = np.array([[1, 0], [0, 1]], dtype=np.complex128)
     for i in range(0, len(l)):
-        cw_rot = rotations[i] @ cw_rot
+        # equivalent to cw_rot = r @ cw_rot
+        r = rotations[i]
+        a = r[0, 0]*cw_rot[0, 0] + r[0, 1]*cw_rot[1,0]
+        b = r[0, 0]*cw_rot[0, 1] + r[0, 1]*cw_rot[1,1]
+        c = r[1, 0]*cw_rot[0, 0] + r[1, 1]*cw_rot[1,0]
+        d = r[1, 0]*cw_rot[0, 1] + r[1, 1]*cw_rot[1,1]
+        cw_rot[0, 0] = a
+        cw_rot[0, 1] = b
+        cw_rot[1, 0] = c
+        cw_rot[1, 1] = d
 
-    return np.trace(cw_rot @ cw_rot).real
+    return (cw_rot[0, 0]*cw_rot[0, 0] +
+            cw_rot[0, 1]*cw_rot[1, 0] +
+            cw_rot[1, 0]*cw_rot[0, 1] +
+            cw_rot[1, 1]*cw_rot[1, 1]).real
 
 
 
-@njit(parallel=True)
+@njit(fastmath=True, parallel=True)
 def compute_traces(index, l, angle, alpha, beta1, beta3, k, hvf, N_orbit):
-    """
+    """Compute the trace of the evolution operator for different trajectories
+
+    Parameters
+    ----------
+    index : [type]
+        [description]
+    l : [type]
+        [description]
+    angle : [type]
+        [description]
+    alpha : [type]
+        [description]
+    beta1 : [type]
+        [description]
+    beta3 : [type]
+        [description]
+    k : [type]
+        [description]
+    hvf : [type]
+        [description]
+    N_orbit : [type]
+        [description]
+
+    Returns
+    -------
+    [type]
+        [description]
+
     """
     T = np.empty(N_orbit)
     return_angle = np.empty(N_orbit)

@@ -23,7 +23,7 @@ from numba  import njit
 Ran1State = namedtuple('Ran1State', ['seed', 'iy', 'iv'])
 
 
-@njit
+@njit(fastmath=True)
 def seed_ran1(seed: int) -> Ran1State:
     """Create a new state based on a seed.
 
@@ -31,7 +31,7 @@ def seed_ran1(seed: int) -> Ran1State:
     return ran1(Ran1State(seed, 0, np.empty(1)))[1]
 
 
-@njit
+@njit(fastmath=True)
 def ran1(state: Ran1State) -> (float, Ran1State):
     """Ran1 implementation.
 

@@ -6,15 +6,16 @@
 #
 # The full license is in the file LICENCE, distributed with this software.
 # -----------------------------------------------------------------------------
-"""
-Compute some parameters in the trajectories
+"""Compute some parameters in the trajectories
+
 """
 
 from numba import njit
 import numpy as np
 from math import sqrt, atan2, cos, sin
 
-@njit
+
+@njit(fastmath=True)
 def find_each_length(x: np.ndarray, y: np.ndarray) -> np.ndarray:
     """Find the length of each segment.
 
@@ -33,7 +34,8 @@ def find_each_length(x: np.ndarray, y: np.ndarray) -> np.ndarray:
     """
     return np.sqrt((y[1:] - y[:-1])**2 + (x[1:] - x[:-1])**2)
 
-@njit
+
+@njit(fastmath=True)
 def find_each_angle(x: np.ndarray, y: np.ndarray) -> np.ndarray:
     """Find the angle of each segment.
 

@@ -1,18 +1,34 @@
-import pandas as pd
-import h5py
-from shabanipy.quantum_hall.wal.universal.trajectories import generate_trajectory, identify_trajectory
-from shabanipy.quantum_hall.wal.universal.trajectory_parameter import *
-from shabanipy.quantum_hall.wal.universal.find_trace import compute_traces
+# -*- coding: utf-8 -*-
+# -----------------------------------------------------------------------------
+# Copyright 2019 by ShabaniPy Authors, see AUTHORS for more details.
+#
+# Distributed under the terms of the MIT license.
+#
+# The full license is in the file LICENCE, distributed with this software.
+# -----------------------------------------------------------------------------
+"""Routines to create and access the data required for different calculations.
+
+"""
 import os
 import random
 from math import pi
 
+import h5py
+import pandas as pd
+
+from .find_trace import compute_traces
+from .trajectories import generate_trajectory, identify_trajectory
+from .trajectory_parameter import find_each_length, find_each_angle
+
 
 def create_all_data():
+    """
+
+    """
     f1 = h5py.File("cal_data.hdf5", "w")
     f2 = open('paper_data.txt','r')
 
-    dt = pd.read_csv(f2, delim_whitespace = True)
+    dt = pd.read_csv(f2, delim_whitespace=True)
 
     number = dt['n']
     seed = dt['seed']
@@ -64,6 +80,8 @@ def create_all_data():
 
 
 def create_data_for_trace_cal():
+    """[summary]
+    """
     f1 = h5py.File("data_for_trace_cal.hdf5", "w")
     f2 = open('paper_data.txt','r')
     dt = pd.read_csv(f2, delim_whitespace = True)
@@ -111,6 +129,8 @@ def create_data_for_trace_cal():
 
 
 def create_data_for_MC_cal():
+    """[summary]
+    """
     f2 = h5py.File("data_for_MC_cal.hdf5", "w")
     f1 = open('paper_data.txt','r')
     dt = pd.read_csv(f1, delim_whitespace = True)
@@ -145,6 +165,18 @@ def create_data_for_MC_cal():
 
 
 def get_data(data_name):
+    """[summary]
+
+    Parameters
+    ----------
+    data_name : [type]
+        [description]
+
+    Returns
+    -------
+    [type]
+        [description]
+    """
     if data_name == "all data":
         try:
             open("cal_data.hdf5")
@@ -170,8 +202,29 @@ def get_data(data_name):
     return f
 
 
-
 def create_trace_data(alpha, beta1, beta3, N_orbit, k, hvf):
+    """[summary]
+
+    Parameters
+    ----------
+    alpha : [type]
+        [description]
+    beta1 : [type]
+        [description]
+    beta3 : [type]
+        [description]
+    N_orbit : [type]
+        [description]
+    k : [type]
+        [description]
+    hvf : [type]
+        [description]
+
+    Returns
+    -------
+    [type]
+        [description]
+    """
     f1 = get_data("data_for_trace_cal")
     f2 = h5py.File("trace_data.hdf5", "a")
     l = f1["l"][:]
@@ -186,6 +239,28 @@ def create_trace_data(alpha, beta1, beta3, N_orbit, k, hvf):
 
 
 def get_trace_data(alpha, beta1, beta3, N_orbit, k, hvf):
+    """[summary]
+
+    Parameters
+    ----------
+    alpha : [type]
+        [description]
+    beta1 : [type]
+        [description]
+    beta3 : [type]
+        [description]
+    N_orbit : [type]
+        [description]
+    k : [type]
+        [description]
+    hvf : [type]
+        [description]
+
+    Returns
+    -------
+    [type]
+        [description]
+    """
     f = h5py.File("trace_data.hdf5", "a")
 
     try:

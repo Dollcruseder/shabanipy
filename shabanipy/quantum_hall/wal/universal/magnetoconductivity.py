@@ -1,8 +1,22 @@
-import h5py
-from numba import njit, prange
+# -*- coding: utf-8 -*-
+# -----------------------------------------------------------------------------
+# Copyright 2019 by ShabaniPy Authors, see AUTHORS for more details.
+#
+# Distributed under the terms of the MIT license.
+#
+# The full license is in the file LICENCE, distributed with this software.
+# -----------------------------------------------------------------------------
+"""Routines to compute the correction to the magneto-conductivity.
+
+"""
+from math import cos, exp, pi
+
 import numpy as np
-from math import exp, cos, pi
-from shabanipy.quantum_hall.wal.universal.create_data_file import get_trace_data, get_data
+from numba import njit, prange
+
+import h5py
+from .create_data_file import get_data, get_trace_data
+
 
 def MC(x: float, L_phi: float, alpha: float, beta1: float, beta3: float, N_orbit: int, k: float, hvf: float) -> float:
 

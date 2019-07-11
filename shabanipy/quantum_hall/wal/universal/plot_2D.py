@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from magnetoconductivity import MC
+from shabanipy.quantum_hall.wal.universal.magnetoconductivity import MC
 import numpy as np
 from math import pow, pi
 

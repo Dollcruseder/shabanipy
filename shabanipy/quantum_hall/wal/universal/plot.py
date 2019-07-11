@@ -12,7 +12,7 @@ ax.set(title=rf'$L_\phi = {L_phi}$',
 n_s = np.arange(3, 5001)
 F = np.sum(1 / (n_s - 2))
 
-alpha = pi
+Alpha = [0, pi/8, pi/4, pi/2, pi]
 beta1 = 0
 beta3 = 0
 N_orbit = 40000
@@ -20,7 +20,9 @@ k = 1
 hvf = 1
 x = np.linspace(-2, 1, 301)
 x1 = 10**x
-y = np.empty(len(x))
-for i in range(0, len(x)):
-    y[i] = -F * MC(x1[i], L_phi, alpha, beta1, beta3, N_orbit, k, hvf) / (2 * pi)
-ax.plot(x1, y)
+for alpha in Alpha:
+    y = np.empty(len(x))
+    for i in range(0, len(x)):
+        y[i] = -F * MC(x1[i], L_phi, alpha, beta1, beta3, N_orbit, k, hvf) / (2 * pi)
+    ax.plot(x1, y)
+plt.show()

@@ -128,7 +128,7 @@ def compute_traces(index, l, angle, alpha, beta1, beta3, k, hvf, N_orbit):
 
     """
     T = np.empty(N_orbit)
-    return_angle = np.empty(N_orbit)
+
 
     for n in prange(N_orbit//1000):
         for i in range(1000):
@@ -139,6 +139,6 @@ def compute_traces(index, l, angle, alpha, beta1, beta3, k, hvf, N_orbit):
             T_a = find_trace(l[begin:end], angle[begin:end],
                              alpha, beta3, beta1, k, hvf)
             T[traj_id] = T_a
-            return_angle[traj_id] = angle[end-1]
 
-    return T, return_angle
+
+    return T

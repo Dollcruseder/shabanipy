@@ -15,6 +15,7 @@ from math import pi
 
 import h5py
 import pandas as pd
+import numpy as np
 
 from .find_trace import compute_traces
 from .trajectories import generate_trajectory, identify_trajectory
@@ -22,7 +23,7 @@ from .trajectory_parameter import find_each_length, find_each_angle
 
 
 def create_all_data():
-    """
+    """Function to create a data file to store all the trajectory data
 
     """
     f1 = h5py.File("cal_data.hdf5", "w")
@@ -80,7 +81,8 @@ def create_all_data():
 
 
 def create_data_for_trace_cal():
-    """[summary]
+    """Function to create a data file to store the data for the trace calculation
+
     """
     f1 = h5py.File("data_for_trace_cal.hdf5", "w")
     f2 = open('paper_data.txt','r')
@@ -129,7 +131,8 @@ def create_data_for_trace_cal():
 
 
 def create_data_for_MC_cal():
-    """[summary]
+    """Function to create a data file to store the data for the magnetoconductivity calculation
+
     """
     f2 = h5py.File("data_for_MC_cal.hdf5", "w")
     f1 = open('paper_data.txt','r')
@@ -140,9 +143,11 @@ def create_data_for_MC_cal():
     n_scat = dt['n_scat']
     L = dt['L']
     S = dt['S']
+    cosj = dt["cosj'"]
 
     S_new = []
     L_new = []
+    cosj_new = []
 
     n_scat_max = 5000
     d = 2.5e-5
@@ -155,12 +160,16 @@ def create_data_for_MC_cal():
         if n_scat_cal[i] == n_scat[i]:
             S_new.append(S[i])
             L_new.append(L[i])
+            cosj_new.append(cosj[i])
 
     dset1 = f2.create_dataset("Surface", (len(S_new),))
     dset1[...] = S_new
 
     dset2 = f2.create_dataset("Length", (len(L_new),))
     dset2[...] = L_new
+
+    dset3 = f2.create_dataset("cosj", (len(cosj_new),))
+    dset3[...] = cosj_new
 
 
 
@@ -231,11 +240,9 @@ def create_trace_data(alpha, beta1, beta3, N_orbit, k, hvf):
     angle = f1["angle"][:]
     index = f1["index"][:]
 
-    T, return_angle = compute_traces(index, l, angle, alpha, beta1, beta3, k, hvf, N_orbit)
+    T = compute_traces(index, l, angle, alpha, beta1, beta3, k, hvf, N_orbit)
     dset1 = f2.create_dataset(f"alpha={alpha},beta1={beta1},beta3={beta3},N_orbit={N_orbit},k={k},hvf={hvf}, trace", (len(T),))
     dset1[...] = T
-    dset2 = f2.create_dataset(f"alpha={alpha},beta1={beta1},beta3={beta3},N_orbit={N_orbit},k={k},hvf={hvf}, return angle", (len(return_angle),))
-    dset2[...] = return_angle
 
 
 def get_trace_data(alpha, beta1, beta3, N_orbit, k, hvf):
@@ -270,11 +277,5 @@ def get_trace_data(alpha, beta1, beta3, N_orbit, k, hvf):
     finally:
         T = f[f"alpha={alpha},beta1={beta1},beta3={beta3},N_orbit={N_orbit},k={k},hvf={hvf}, trace"][:]
 
-    try:
-        f[f"alpha={alpha},beta1={beta1},beta3={beta3},N_orbit={N_orbit},k={k},hvf={hvf}, return angle"][:]
-    except KeyError:
-        create_trace_data(alpha, beta1, beta3, N_orbit, k, hvf)
-    finally:
-        return_angle = f[f"alpha={alpha},beta1={beta1},beta3={beta3},N_orbit={N_orbit},k={k},hvf={hvf}, return angle"][:]
 
-    return T, return_angle
+    return T

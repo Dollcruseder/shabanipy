@@ -26,7 +26,7 @@ from shabanipy.quantum_hall.wal.universal.random_number_generator import seed_ra
 Point = namedtuple('Point', ['x', 'y'])
 
 
-@njit
+@njit(fastmath=True)
 def check_return_condition(point: tuple,
                            next_point: tuple,
                            distance: float) -> bool:
@@ -56,8 +56,7 @@ def check_return_condition(point: tuple,
                    sqrt(next_point.x ** 2 + next_point.y ** 2)) < distance
 
 
-
-@njit
+@njit(fastmath=True)
 def identify_trajectory(seed: int, n_scat_max: int, distance: float) -> int:
     """Identify the number of scattering event leading to a return trajectory.
 
@@ -96,7 +95,7 @@ def identify_trajectory(seed: int, n_scat_max: int, distance: float) -> int:
     return i
 
 
-@njit
+@njit(fastmath=True)
 def generate_trajectory(seed: int, n_scat: int) -> np.ndarray:
     """Generate a trajectory containing a known number of points.
 

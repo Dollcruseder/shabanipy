@@ -26,8 +26,12 @@ def create_all_data():
     """Function to create a data file to store all the trajectory data
 
     """
-    f1 = h5py.File("cal_data.hdf5", "w")
-    f2 = open('paper_data.txt','r')
+    f1 = h5py.File(os.path.join(os.path.dirname(__file__),
+                                "cal_data.hdf5"),
+                   "w")
+    f2 = open(os.path.join(os.path.dirname(__file__),
+                                'paper_data.txt'),
+              'r')
 
     dt = pd.read_csv(f2, delim_whitespace=True)
 
@@ -84,8 +88,12 @@ def create_data_for_trace_cal():
     """Function to create a data file to store the data for the trace calculation
 
     """
-    f1 = h5py.File("data_for_trace_cal.hdf5", "w")
-    f2 = open('paper_data.txt','r')
+    f1 = h5py.File(os.path.join(os.path.dirname(__file__),
+                                "data_for_trace_cal.hdf5"),
+                   "w")
+    f2 = open(os.path.join(os.path.dirname(__file__),
+                                'paper_data.txt'),
+              'r')
     dt = pd.read_csv(f2, delim_whitespace = True)
 
     number = dt['n']
@@ -134,8 +142,12 @@ def create_data_for_MC_cal():
     """Function to create a data file to store the data for the magnetoconductivity calculation
 
     """
-    f2 = h5py.File("data_for_MC_cal.hdf5", "w")
-    f1 = open('paper_data.txt','r')
+    f2 = h5py.File(os.path.join(os.path.dirname(__file__),
+                                "data_for_MC_cal.hdf5"),
+                   "w")
+    f21 = open(os.path.join(os.path.dirname(__file__),
+                                'paper_data.txt'),
+              'r')
     dt = pd.read_csv(f1, delim_whitespace = True)
 
     number = dt['n']
@@ -173,69 +185,77 @@ def create_data_for_MC_cal():
 
 
 
-def get_data(data_name):
-    """[summary]
+def get_data(data_name: str):
+    """Check if the data file exists. If it exists, get the data. If not, create the data file and get the data.
 
     Parameters
     ----------
-    data_name : [type]
-        [description]
+    data_name : str
+        the name of the data
 
     Returns
     -------
     [type]
-        [description]
+        the data
     """
     if data_name == "all data":
         try:
-            open("cal_data.hdf5")
+            open(os.path.join(os.path.dirname(__file__),
+                              "cal_data.hdf5"))
         except IOError:
             create_all_data()
         finally:
-            f = h5py.File("cal_data.hdf5", "r")
+            f = h5py.File(os.path.join(os.path.dirname(__file__),
+                                       "cal_data.hdf5"),
+                          "r")
     elif data_name == "data_for_trace_cal":
         try:
-            open("data_for_trace_cal.hdf5")
+            open(os.path.join(os.path.dirname(__file__),
+                              "data_for_trace_cal.hdf5"))
         except IOError:
             create_data_for_trace_cal()
         finally:
-            f = h5py.File("data_for_trace_cal.hdf5", "r")
+            f = h5py.File(os.path.join(os.path.dirname(__file__),
+                                       "data_for_trace_cal.hdf5"),
+                          "r")
     elif data_name == "data_for_MC_cal":
         try:
-            open("data_for_MC_cal.hdf5")
+            open(os.path.join(os.path.dirname(__file__),
+                              "data_for_MC_cal.hdf5"))
         except IOError:
             create_data_for_MC_cal()
         finally:
-            f = h5py.File("data_for_MC_cal.hdf5", "r")
+            f = h5py.File(os.path.join(os.path.dirname(__file__),
+                                       "data_for_MC_cal.hdf5"),
+                          "r")
 
     return f
 
 
 def create_trace_data(alpha, beta1, beta3, N_orbit, k, hvf):
-    """[summary]
+    """Function to create a trace dataset with the input parameters
 
     Parameters
     ----------
-    alpha : [type]
+    alpha : float
+        the Rashba SOI coefficient
+    beta1 : float
+        the linear Dresselhaus coefficient
+    beta3 : float
+        the cubic Dresselhaus coefficient
+    N_orbit : int
+        orbit number
+    k : float
         [description]
-    beta1 : [type]
-        [description]
-    beta3 : [type]
-        [description]
-    N_orbit : [type]
-        [description]
-    k : [type]
-        [description]
-    hvf : [type]
+    hvf : float
         [description]
 
-    Returns
-    -------
-    [type]
-        [description]
+
     """
     f1 = get_data("data_for_trace_cal")
-    f2 = h5py.File("trace_data.hdf5", "a")
+    f2 = h5py.File(os.path.join(os.path.dirname(__file__),
+                                "trace_data.hdf5"),
+                   "a")
     l = f1["l"][:]
     angle = f1["angle"][:]
     index = f1["index"][:]
@@ -246,18 +266,18 @@ def create_trace_data(alpha, beta1, beta3, N_orbit, k, hvf):
 
 
 def get_trace_data(alpha, beta1, beta3, N_orbit, k, hvf):
-    """[summary]
+    """Get the trace dataset with the input parameters. If it doesn't exist, create and get it
 
     Parameters
     ----------
-    alpha : [type]
-        [description]
-    beta1 : [type]
-        [description]
-    beta3 : [type]
-        [description]
-    N_orbit : [type]
-        [description]
+    alpha : float
+        the Rashba SOI coefficient
+    beta1 : float
+        the linear Dresselhaus coefficient
+    beta3 : float
+        the cubic Dresselhaus coefficient
+    N_orbit : int
+        orbit number
     k : [type]
         [description]
     hvf : [type]
@@ -265,10 +285,12 @@ def get_trace_data(alpha, beta1, beta3, N_orbit, k, hvf):
 
     Returns
     -------
-    [type]
-        [description]
+    array
+        the trace data
     """
-    f = h5py.File("trace_data.hdf5", "a")
+    f = h5py.File(os.path.join(os.path.dirname(__file__),
+                               "trace_data.hdf5"),
+                  "a")
 
     try:
         f[f"alpha={alpha},beta1={beta1},beta3={beta3},N_orbit={N_orbit},k={k},hvf={hvf}, trace"][:]

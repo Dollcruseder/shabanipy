@@ -227,6 +227,8 @@ def get_data(data_name: str):
             f = h5py.File(os.path.join(os.path.dirname(__file__),
                                        "cal_data.hdf5"),
                           "r")
+            return f
+
     elif data_name == "data_for_trace_cal":
         try:
             open(os.path.join(os.path.dirname(__file__),
@@ -237,6 +239,15 @@ def get_data(data_name: str):
             f = h5py.File(os.path.join(os.path.dirname(__file__),
                                        "data_for_trace_cal.hdf5"),
                           "r")
+            l = f["l"][:]
+            c_phi = f["c_phi"][:]
+            c_3phi = f["c_3phi"][:]
+            s_phi = f["s_phi"][:]
+            s_3phi = f["s_3phi"][:]
+            index = f["index"][:]
+
+            return index, l, c_phi, c_3phi, s_phi, s_3phi
+
     elif data_name == "data_for_MC_cal":
         try:
             open(os.path.join(os.path.dirname(__file__),
@@ -247,79 +258,15 @@ def get_data(data_name: str):
             f = h5py.File(os.path.join(os.path.dirname(__file__),
                                        "data_for_MC_cal.hdf5"),
                           "r")
-
-    return f
-
-
-def create_trace_data(alpha, beta1, beta3, N_orbit, k, hvf):
-    """Function to create a trace dataset with the input parameters
-
-    Parameters
-    ----------
-    alpha : float
-        the Rashba SOI coefficient
-    beta1 : float
-        the linear Dresselhaus coefficient
-    beta3 : float
-        the cubic Dresselhaus coefficient
-    N_orbit : int
-        orbit number
-    k : float
-        [description]
-    hvf : float
-        [description]
+            return f
 
 
-    """
-    f1 = get_data("data_for_trace_cal")
-    f2 = h5py.File(os.path.join(os.path.dirname(__file__),
-                                "trace_data.hdf5"),
-                   "a")
-    l = f1["l"][:]
-    c_phi = f1["c_phi"][:]
-    c_3phi = f1["c_3phi"][:]
-    s_phi = f1["s_phi"][:]
-    s_3phi = f1["s_3phi"][:]
-    index = f1["index"][:]
 
-    T = compute_traces(index, l, c_phi, c_3phi, s_phi, s_3phi, alpha, beta1, beta3, k, hvf, N_orbit)
-    dset1 = f2.create_dataset(f"alpha={alpha},beta1={beta1},beta3={beta3},N_orbit={N_orbit},k={k},hvf={hvf}, trace", (len(T),))
-    dset1[...] = T
+def get_data_for_MC_cal(N_orbit):
 
+    f = get_data("data_for_MC_cal")
+    S = f["Surface"][:N_orbit]
+    L = f["Length"][:N_orbit]
+    cosj = f["cosj"][:N_orbit]
 
-def get_trace_data(alpha, beta1, beta3, N_orbit, k, hvf):
-    """Get the trace dataset with the input parameters. If it doesn't exist, create and get it
-
-    Parameters
-    ----------
-    alpha : float
-        the Rashba SOI coefficient
-    beta1 : float
-        the linear Dresselhaus coefficient
-    beta3 : float
-        the cubic Dresselhaus coefficient
-    N_orbit : int
-        orbit number
-    k : [type]
-        [description]
-    hvf : [type]
-        [description]
-
-    Returns
-    -------
-    array
-        the trace data
-    """
-    f = h5py.File(os.path.join(os.path.dirname(__file__),
-                               "trace_data.hdf5"),
-                  "a")
-
-    try:
-        f[f"alpha={alpha},beta1={beta1},beta3={beta3},N_orbit={N_orbit},k={k},hvf={hvf}, trace"][:]
-    except KeyError:
-        create_trace_data(alpha, beta1, beta3, N_orbit, k, hvf)
-    finally:
-        T = f[f"alpha={alpha},beta1={beta1},beta3={beta3},N_orbit={N_orbit},k={k},hvf={hvf}, trace"][:]
-
-
-    return T
+    return S, L, cosj

@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 from shabanipy.quantum_hall.wal.universal.magnetoconductivity import MC
+from shabanipy.quantum_hall.wal.universal.create_data_file import get_data, get_data_for_MC_cal
+from shabanipy.quantum_hall.wal.universal.find_trace import compute_traces
 import numpy as np
 from math import pow, pi
 
@@ -20,9 +22,13 @@ k = 1
 hvf = 1
 x = np.linspace(-2, 1, 301)
 x1 = 10**x
+index, l, c_phi, c_3phi, s_phi, s_3phi = get_data("data_for_trace_cal")
+S, L, cosj = get_data_for_MC_cal(N_orbit)
+
 for alpha in Alpha:
+    T = compute_traces(index, l, c_phi, c_3phi, s_phi, s_3phi, alpha, beta1, beta3, k, hvf, N_orbit)
     y = np.empty(len(x))
     for i in range(0, len(x)):
-        y[i] = -F * MC(x1[i], L_phi, alpha, beta1, beta3, N_orbit, k, hvf) / (2 * pi)
+        y[i] = -F * MC(x1[i], L_phi, T, S, L, cosj) / (2 * pi)
     ax.plot(x1, y)
 plt.show()

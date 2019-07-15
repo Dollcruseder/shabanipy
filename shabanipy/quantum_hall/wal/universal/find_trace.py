@@ -16,8 +16,8 @@ from numba import njit, prange
 
 
 @njit(fastmath=True)
-def find_trace(l: np.ndarray, c_phi: np.ndarray, c_3phi: np.ndarray, s_phi: np.ndarray, s_3phi: np.ndarray, alpha: float, beta3: float,
-               beta1: float, k: float, hvf: float) -> float:
+def find_trace(l: np.ndarray, c_phi: np.ndarray, c_3phi: np.ndarray, s_phi: np.ndarray, s_3phi: np.ndarray, 
+               alpha: float, beta3: float,beta1: float, k: float, hvf: float) -> float:
     """Find the trace of the matrix R_tot^2
 
     Parameters

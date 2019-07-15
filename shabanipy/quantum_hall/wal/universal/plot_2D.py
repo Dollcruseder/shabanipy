@@ -1,5 +1,11 @@
+import os
+os.environ['MKL_NUM_THREADS'] = '1'
+import time
+import sys
 import matplotlib.pyplot as plt
 from shabanipy.quantum_hall.wal.universal.magnetoconductivity import MC
+from shabanipy.quantum_hall.wal.universal.create_data_file import get_data, get_data_for_MC_cal
+from shabanipy.quantum_hall.wal.universal.find_trace import compute_traces
 import numpy as np
 from math import pow, pi
 
@@ -18,16 +24,21 @@ Zm = []
 beta3 = pi / 32
 k = 1
 hvf = 1
+index, l, c_phi, c_3phi, s_phi, s_3phi = get_data("data_for_trace_cal")
+S, L, cosj = get_data_for_MC_cal(N_orbit)
 
-
-
+tic = time.time()
 for i in y:
+
+    T = compute_traces(index, l, c_phi, c_3phi, s_phi, s_3phi, i, i, beta3, k, hvf, N_orbit)
+
     z = []
     for j in x:
-        z.append( -F * MC(j, L_phi, i, i, beta3, N_orbit, k, hvf) / (2 * pi))
+        z.append( -F * MC(j, L_phi, T, S, L, cosj) / (2 * pi))
     Z.append(z)
     zm = x1[z.index(min(z))]
     Zm.append(zm)
+print('Computation', time.time() - tic)
 
 cs = plt.contourf(X, Y, Z, 20)
 #plt.pcolormesh(X, Y, Z)

@@ -105,7 +105,10 @@ def create_data_for_trace_cal():
     n_scat_cal = np.empty(len(number), dtype=np.int)
 
     L = []
-    A = []
+    C_phi = []
+    C_3phi = []
+    S_phi = []
+    S_3phi = []
     index = []
     j = 0
 
@@ -122,20 +125,36 @@ def create_data_for_trace_cal():
 
             l = find_each_length(x, y)
             angle = find_each_angle(x, y) + random.uniform(0, 2 * pi)
-            #angle = find_each_angle(x, y)
+            c_phi = np.cos(angle)
+            c_3phi = np.cos(3 * angle)
+            s_phi = np.sin(angle)
+            s_3phi = np.sin (3* angle)
+
             L.extend(l)
-            A.extend(angle)
+            C_phi.extend(c_phi)
+            C_3phi.extend(c_3phi)
+            S_phi.extend(s_phi)
+            S_3phi.extend(s_3phi)
             index.append((j, j +len(l)))
             j += len(l)
 
-    dset1 = f1.create_dataset("l", (len(L),))
-    dset1[...] = L
+    dset = f1.create_dataset("l", (len(L),))
+    dset[...] = L
 
-    dset2 = f1.create_dataset("angle", (len(A),))
-    dset2[...] = A
+    dset = f1.create_dataset("c_phi", (len(C_phi),))
+    dset[...] = C_phi
 
-    dset3 = f1.create_dataset("index", (len(index),2), dtype = "int64")
-    dset3[...] = index
+    dset = f1.create_dataset("c_3phi", (len(C_3phi),))
+    dset[...] = C_3phi
+
+    dset = f1.create_dataset("s_phi", (len(S_phi),))
+    dset[...] = S_phi
+
+    dset = f1.create_dataset("s_3phi", (len(S_3phi),))
+    dset[...] = S_3phi
+
+    dset = f1.create_dataset("index", (len(index),2), dtype = "int64")
+    dset[...] = index
 
 
 def create_data_for_MC_cal():
@@ -257,10 +276,13 @@ def create_trace_data(alpha, beta1, beta3, N_orbit, k, hvf):
                                 "trace_data.hdf5"),
                    "a")
     l = f1["l"][:]
-    angle = f1["angle"][:]
+    c_phi = f1["c_phi"][:]
+    c_3phi = f1["c_3phi"][:]
+    s_phi = f1["s_phi"][:]
+    s_3phi = f1["s_3phi"][:]
     index = f1["index"][:]
 
-    T = compute_traces(index, l, angle, alpha, beta1, beta3, k, hvf, N_orbit)
+    T = compute_traces(index, l, c_phi, c_3phi, s_phi, s_3phi, alpha, beta1, beta3, k, hvf, N_orbit)
     dset1 = f2.create_dataset(f"alpha={alpha},beta1={beta1},beta3={beta3},N_orbit={N_orbit},k={k},hvf={hvf}, trace", (len(T),))
     dset1[...] = T
 

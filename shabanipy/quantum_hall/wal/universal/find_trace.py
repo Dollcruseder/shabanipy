@@ -16,7 +16,7 @@ from numba import njit, prange
 
 
 @njit(fastmath=True)
-def find_trace(l: np.ndarray, angle: np.ndarray, alpha: float, beta3: float,
+def find_trace(l: np.ndarray, c_phi: np.ndarray, c_3phi: np.ndarray, s_phi: np.ndarray, s_3phi: np.ndarray, alpha: float, beta3: float,
                beta1: float, k: float, hvf: float) -> float:
     """Find the trace of the matrix R_tot^2
 
@@ -46,11 +46,6 @@ def find_trace(l: np.ndarray, angle: np.ndarray, alpha: float, beta3: float,
     # XXX all of this could be moved outside of this function this the
     # allocations may not play well with prange
     rotations = np.empty((len(l), 2, 2), dtype=np.complex128)
-
-    c_phi = np.cos(angle)
-    s_phi = np.sin(angle)
-    c_3phi = np.cos(3 * angle)
-    s_3phi = np.sin(3 * angle)
 
     B_x = alpha * k * s_phi + beta3 * (k ** 3) * c_3phi + beta1 * k * c_phi
     B_y = -alpha * k * c_phi + beta3 * (k ** 3) * s_3phi - beta1 * k * s_phi
@@ -97,7 +92,7 @@ def find_trace(l: np.ndarray, angle: np.ndarray, alpha: float, beta3: float,
 
 
 @njit(fastmath=True, parallel=True)
-def compute_traces(index, l, angle, alpha, beta1, beta3, k, hvf, N_orbit):
+def compute_traces(index, l, c_phi, c_3phi, s_phi, s_3phi, alpha, beta1, beta3, k, hvf, N_orbit):
     """Compute the trace of the evolution operator for different trajectories
 
     Parameters
@@ -136,7 +131,7 @@ def compute_traces(index, l, angle, alpha, beta1, beta3, k, hvf, N_orbit):
             if traj_id >= N_orbit:
                 break
             begin, end = index[traj_id]
-            T_a = find_trace(l[begin:end], angle[begin:end],
+            T_a = find_trace(l[begin:end], c_phi[begin:end], c_3phi[begin:end], s_phi[begin:end], s_3phi[begin:end],
                              alpha, beta3, beta1, k, hvf)
             T[traj_id] = T_a
 

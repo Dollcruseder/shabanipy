@@ -47,9 +47,15 @@ def fitting_dynesty(field, r, reference_field, max_field,
 
     sigma = (1/r) / (cs.e**2/(2*np.pi*cs.Planck))
 
-    mask = np.where(np.logical_and(np.greater(field[0], 0),
-                                   np.less(field[0], max_field)))
-    f, s = field[0][mask], sigma[0][mask]
+    number = 1
+    # the number of the wal trace 
+    # I think 1, 6, 8, 10, 12, 15, 50, 75, 77, 80, 85, 90, these number of the wal trace would make sense.
+
+    print(f'Treating WAL trace {number}/{trace_number}')
+
+    mask = np.where(np.logical_and(np.greater(field[number - 1], 0),
+                                   np.less(field[number - 1], max_field)))
+    f, s = field[number - 1][mask], sigma[number - 1][mask]
 
     ref_ind = np.argmin(np.abs(f - reference_field))
         # don't change the reference field
@@ -84,7 +90,7 @@ def fitting_dynesty(field, r, reference_field, max_field,
     def loglike(v):
         logtheta_alpha, logtheta_beta3, logLphi, logsigma = v
         theta_alpha, theta_beta3, L_phi, sigma = (10**logtheta_alpha, 10**logtheta_beta3, 10**logLphi, 10**logsigma)
-        yr = get_MC(f, theta_alpha, 0, theta_beta3, L_phi, htr[0])
+        yr = get_MC(f, theta_alpha, 0, theta_beta3, L_phi, htr[number - 1])
         residsq = (yr - dsigma)**2 / sigma**2
         loglike = -0.5 * np.sum(residsq + np.log(2 * np.pi * sigma**2))
         return loglike

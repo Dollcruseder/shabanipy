@@ -72,6 +72,9 @@ class MaterialParameters:
     dielectric_permitivity : float
         Relative dielectric permitivity of the material
 
+    elasticity_11, elasticity_12: float
+        Elasticity parameters in GPa
+
     """
     def __init__(self, electron_mass, ep, eg, ev, alpha, beta, spin_orbit_splitting,
                  f, gamma_1, gamma_2, gamma_3, kappa,

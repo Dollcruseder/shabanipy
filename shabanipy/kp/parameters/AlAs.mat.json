@@ -16,7 +16,7 @@
     "def_c": -5.64,
     "def_d": -3.4,
     "lattice_constant": 0.56611,
-    "dielectric_permitivity": ,
-    "elasticity_11": ,
-    "elasticity_12":
+    "dielectric_permitivity": 1,
+    "elasticity_11": 1250,
+    "elasticity_12": 534
 }

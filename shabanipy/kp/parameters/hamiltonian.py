@@ -7,6 +7,7 @@
 
 """
 import numpy as np
+import scipy.constants as cs
 from numba import jitclass
 from numba.types import int64
 
@@ -50,13 +51,13 @@ class _HamiltonianParameters:
         """Compute the kinetic prefactor.
 
         """
-        return np_float(0.5)/material.electron_mass
+        return np_float(0.5)/cs.electron_mass
 
     def compute_p(self, material):
         """Compute P.
 
         """
-        return np.sqrt(np_float(0.5)*material.ep/material.electron_mass)
+        return np.sqrt(np_float(0.5)*material.ep/cs.electron_mass)
 
     def compute_gamma_bar(self, material):
         """Compute gamma_bar.

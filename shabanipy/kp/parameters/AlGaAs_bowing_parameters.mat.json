@@ -1,0 +1,22 @@
+{
+    "electron_mass": 0,
+    "ep": 0,
+    "eg": -0.127,
+    "ev": 0,
+    "alpha": 0,
+    "beta": 0,
+    "spin_orbit_splitting": 0,
+    "f": 0,
+    "gamma_1": 0,
+    "gamma_2": 0,
+    "gamma_3": 0,
+    "kappa": 0,
+    "def_a": 0,
+    "def_b": 0,
+    "def_c": 0,
+    "def_d": 0,
+    "lattice_constant": 0,
+    "dielectric_permitivity": 0,
+    "elasticity_11": 0,
+    "elasticity_12": 0
+}

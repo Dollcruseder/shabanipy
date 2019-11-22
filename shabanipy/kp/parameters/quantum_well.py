@@ -15,7 +15,10 @@ from ..types import np_float
 from .hamiltonian import HamiltonianParameters1D, HamiltonianParameters2D
 from .materials import (MATERIAL_PARAMETERS, AlloyMethod,
                         DiscretizedMaterialParameters1D,
-                        DiscretizedMaterialParameters2D, make_alloy)
+                        DiscretizedMaterialParameters2D,
+                        load_material_parameters,
+                        load_bowing_parameters,
+                        make_alloy)
 
 
 def compute_thickness(layer_like_list):
@@ -138,8 +141,8 @@ class LayerParameters:
     thickness : float
         Thickness of the layer expressed in nm.
 
-    materials : dict[str, kp.parameters.MaterialParameters]
-        Mapping between materials names and the associated parameters.
+    materials : list[str]
+        Materials names of the two compounds
 
     composition : dict[str, float]
         Composition of the layer expressed as fraction of the materials used
@@ -148,7 +151,8 @@ class LayerParameters:
     """
     def __init__(self, thickness, materials, composition):
         self.thickness = thickness
-        self.materials = materials
+        self.materials = {m: load_material_parameters for m in materials}
+        self.bowing = load_bowing_parameters(materials)
         self.composition = composition
 
 
@@ -198,7 +202,8 @@ class WellParameters:
         return {'z': compute_thickness(self.layers)}
 
     def generate_hamiltonian_parameters(self, discretization_step,
-                                        alloy_method, temperature=0):
+                                        alloy_method, materials_order,
+                                        bowing_parameter, temperature=0):
         """Compute the material parameters on the dicrete lattice.
 
         Parameters
@@ -211,8 +216,14 @@ class WellParameters:
             Enum value indicating the method to use to compute the parameters
             of an alloy.
 
+        bowing_parameter:
+
+        materials_order: list
+            The material order if the layer
+
         temperature: float
             Temperature at which to compute the Hamiltonian parameters.
+
 
         Returns
         -------
@@ -233,16 +244,12 @@ class WellParameters:
 
         parameters = np.empty((site_number, len(MATERIAL_PARAMETERS)),
                               dtype=np_float)
-        if alloy_method != AlloyMethod.LINEAR:
-            materials_order = ('HgTe', 'CdTe')
-        else:
-            materials_order = list(materials[m] for m in materials_order)
 
         m_pars = tuple([materials[m] for m in materials_order])
         for i in range(site_number):
             parameters[i] = make_alloy(
                 alloy_method, [c_profiles[m][i] for m in materials_order],
-                m_pars, temperature)
+                m_pars, bowing_parameter[i], temperature)
 
         return HamiltonianParameters1D(
                 site_number, discretization_step,

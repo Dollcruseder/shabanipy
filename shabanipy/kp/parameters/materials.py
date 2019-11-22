@@ -7,6 +7,8 @@
 
 """
 import enum
+import os
+import json
 
 import numpy as np
 from numba import njit, jitclass
@@ -125,11 +127,56 @@ DiscretizedMaterialParameters2D =\
 
 EG_INDEX = 2
 EV_INDEX = 3
-GAMMA1_INDEX = 6
-GAMMA2_INDEX = 7
-GAMMA3_INDEX = 8
-KAPPA_INDEX = 9
+GAMMA1_INDEX = 8
+GAMMA2_INDEX = 9
+GAMMA3_INDEX = 10
+KAPPA_INDEX = 11
 LATTICE_CONSTANT_INDEX = -4
+
+def load_material_parameters(name):
+    """Load the parameters for a material based on its name.
+
+    """
+    with open(os.path.join(os.path.dirname(__file__),
+                           name.lower() + '.mat.json')) as f:
+        parameters = json.load(f)
+
+    if parameters["kappa"] == "Unknow":
+        parameters["kappa"] = parameters["gamma_3"] + np_float(2/3)*parameters["gamma_2"] - np_float(1/3)*parameters["gamma_1"] - np_float(2/3)
+    # Here we calculate the value of kappa if it is unknow
+
+    return MaterialParameters(**parameters)
+
+def get_alloy_name(name1, name2):
+    """From the name of the material name get the name of the alloy
+
+    """
+    alloy_name = "None"
+    if ((name1 == "GaAs") & (name2 == "InAs"))|((name1 == "InAs") & (name2 == "GaAs")):
+        alloy_name = "GaInAs"
+    if ((name1 == "GaAs") & (name2 == "AlAs"))|((name1 == "AlAs") & (name2 == "GaAs")):
+        alloy_name = "AlGaAs"
+    if ((name1 == "InAs") & (name2 == "AlAs"))|((name1 == "AlAs") & (name2 == "InAs")):
+        alloy_name = "AlInAs"
+    return alloy_name
+
+def load_bowing_parameters(names):
+    """Load the bowing parameters based on its compounds' names
+
+    Parameters
+    ===========================================================
+    names: list[str]
+
+    """
+    name1, name2 = names
+    alloy_name = get_alloy_name(name1, name2)
+    if alloy_name == "None":
+        raise RuntimeError('Bowing parameters are not found.')
+    with open(os.path.join(os.path.dirname(__file__),
+                           alloy_name.lower() + '_bowing_parameters.mat.json')) as f:
+        parameters = json.load(f)
+    return MaterialParameters(**parameters)
+
 
 
 class AlloyMethod(enum.IntEnum):
@@ -146,7 +193,7 @@ class AlloyMethod(enum.IntEnum):
 
 
 @njit
-def make_alloy(method, fractions, materials, bowing_parameter, temperature, preuffer):
+def make_alloy(method, fractions, materials, bowing_parameter, temperature=0, preuffer=False):
     """Compute the parameters of an alloy using the specified method.
 
     Parameters
@@ -160,9 +207,9 @@ def make_alloy(method, fractions, materials, bowing_parameter, temperature, preu
     materials : tuple[kp.parameters.MaterialParameters]
         Tuple containing the parameters
 
-    bowing_parameter: float
-        Bowing parameter accounts for the deviation from a linear Interpolation
-        between two  binaries
+    bowing_parameter: kp.parameters.MaterialParameters
+        Bowing parameters accounting for the deviation from a linear interpolation
+        between two binaries
 
     temperature : float
         Temperature in Kelvin at which we consider the alloy.
@@ -180,21 +227,18 @@ def make_alloy(method, fractions, materials, bowing_parameter, temperature, preu
     if len(fractions) > 2:
         raise RuntimeError('Only binary alloys are supported.')
 
-    # For HgCdTe, m1 is HgTe and m2 is CdTe
     m1, m2 = materials
-    alloy = [fractions[0]*p1 + fractions[1]*p2
-             for p1, p2 in zip(m1.as_tuple(), m2.as_tuple())]
+    m1.eg = m1.eg - m1.alpha * temperature**2 / (temperature + m1.beta)
+    m2.eg = m2.eg - m2.alpha * temperature**2 / (temperature + m2.beta)
 
-
-    Eg1 = m1.eg - m1.alpha * temperature**2 / (temperature + m1.beta)
-    Eg2 = m2.eg - m2.alpha * temperature**2 / (temperature + m2.beta)
     if method & AlloyMethod.TERNARY_ALLOY:
-        Eg = Eg1 * fractions[0] + Eg2 * fractions[1] - fractions[0] * fractions[1] * bowing_parameter
-        alloy[EG_INDEX] = Eg
+        alloy = [fractions[0]*p1 + fractions[1]*p2 - fractions[0] * fractions[1] * C
+                 for p1, p2, C in zip(m1.as_tuple(), m2.as_tuple(), bowing_parameter.as_tuple())]
 
     if method & AlloyMethod.QUATERNARY_ALLOY:
-        Eg = Eg1 * fractions[0] + Eg2 * fractions[1]
-        alloy[EG_INDEX] = Eg
+        alloy = [fractions[0]*p1 + fractions[1]*p2
+                 for p1, p2 in zip(m1.as_tuple(), m2.as_tuple())]
+
 
     if preuffer:
         kin = np_float(0.5)/materials[0].electron_mass  # hb^2/(2*m_0)

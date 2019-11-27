@@ -15,7 +15,7 @@ from numba import njit, jitclass
 
 from ..types import nb_float, np_float
 
-#: Names of the material parameters
+# #: Names of the material parameters
 MATERIAL_PARAMETERS = ('electron_mass', 'ep',
                        'eg', 'ev', 'alpha', 'beta', 'spin_orbit_splitting',
                        'f', 'gamma_1', 'gamma_2', 'gamma_3', 'kappa',
@@ -24,7 +24,6 @@ MATERIAL_PARAMETERS = ('electron_mass', 'ep',
                        'elasticity_11', 'elasticity_12')
 
 
-@jitclass([(p, nb_float) for p in MATERIAL_PARAMETERS])
 class MaterialParameters:
     """Class describing a binary compound
 
@@ -78,11 +77,13 @@ class MaterialParameters:
         Elasticity parameters in GPa
 
     """
-    def __init__(self, electron_mass, ep, eg, ev, alpha, beta, spin_orbit_splitting,
+    def __init__(self, compounds,
+                 electron_mass, ep, eg, ev, alpha, beta, spin_orbit_splitting,
                  f, gamma_1, gamma_2, gamma_3, kappa,
                  def_a, def_b, def_c, def_d,
                  lattice_constant, dielectric_permitivity,
                  elasticity_11, elasticity_12):
+        self.compounds = compounds # dict[str: float]
         self.electron_mass = electron_mass
         self.ep = ep
         self.eg = eg
@@ -109,12 +110,15 @@ class MaterialParameters:
 
         """
         return (self.electron_mass, self.ep,
-                self.eg, self.ev, self.spin_orbit_splitting,
+                self.eg, self.ev, self.alpha, self.beta,
+                self.spin_orbit_splitting,
                 self.f, self.gamma_1, self.gamma_2, self.gamma_3, self.kappa,
                 self.def_a, self.def_b, self.def_c, self.def_d,
                 self.lattice_constant, self.dielectric_permitivity,
                 self.elasticity_11, self.elasticity_12)
 
+
+#MaterialParameters = jitclass([(p, nb_float) for p in MATERIAL_PARAMETERS])(MaterialParameters)
 
 mat_class = (MaterialParameters.class_type.class_def
              if hasattr(MaterialParameters, 'class_type') else
@@ -124,7 +128,6 @@ DiscretizedMaterialParameters1D =\
 DiscretizedMaterialParameters2D =\
     jitclass([(p, nb_float[:, :]) for p in MATERIAL_PARAMETERS])(mat_class)
 
-
 EG_INDEX = 2
 EV_INDEX = 3
 GAMMA1_INDEX = 8
@@ -133,19 +136,24 @@ GAMMA3_INDEX = 10
 KAPPA_INDEX = 11
 LATTICE_CONSTANT_INDEX = -4
 
+_CACHE_MATERIAL = {}
 def load_material_parameters(name):
     """Load the parameters for a material based on its name.
 
     """
-    with open(os.path.join(os.path.dirname(__file__),
-                           name.lower() + '.mat.json')) as f:
-        parameters = json.load(f)
+    if name not in _CACHE_MATERIAL:
+        with open(os.path.join(os.path.dirname(__file__),
+                               name.lower() + '.mat.json')) as f:
+            parameters = json.load(f)
 
-    if parameters["kappa"] == "Unknow":
-        parameters["kappa"] = parameters["gamma_3"] + np_float(2/3)*parameters["gamma_2"] - np_float(1/3)*parameters["gamma_1"] - np_float(2/3)
-    # Here we calculate the value of kappa if it is unknow
+        if parameters["kappa"] == "Unknow":
+            parameters["kappa"] = parameters["gamma_3"] + np_float(2/3)*parameters["gamma_2"] - np_float(1/3)*parameters["gamma_1"] - np_float(2/3)
+            # Here we calculate the value of kappa if it is unknow
 
-    return MaterialParameters(**parameters)
+        _CACHE_MATERIAL[name] = MaterialParameters({name: 1.0}, **parameters)
+
+    return _CACHE_MATERIAL[name]
+
 
 def get_alloy_name(name1, name2):
     """From the name of the material name get the name of the alloy
@@ -160,40 +168,33 @@ def get_alloy_name(name1, name2):
         alloy_name = "AlInAs"
     return alloy_name
 
+
+#:
+_CACHE_BOWING = {}
+
+
 def load_bowing_parameters(names):
     """Load the bowing parameters based on its compounds' names
 
     Parameters
-    ===========================================================
+    ----------
     names: list[str]
 
     """
     name1, name2 = names
     alloy_name = get_alloy_name(name1, name2)
-    if alloy_name == "None":
-        raise RuntimeError('Bowing parameters are not found.')
-    with open(os.path.join(os.path.dirname(__file__),
-                           alloy_name.lower() + '_bowing_parameters.mat.json')) as f:
-        parameters = json.load(f)
-    return MaterialParameters(**parameters)
+    if alloy_name not in _CACHE_BOWING:
+        with open(os.path.join(os.path.dirname(__file__),
+                               alloy_name.lower() + '_bowing_parameters.mat.json')) as f:
+            parameters = json.load(f)
+
+        _CACHE_BOWING[alloy_name] = MaterialParameters({name1: 0.0, name2: 0.0},
+                                                       **parameters)
+
+    return _CACHE_BOWING[alloy_name]
 
 
-
-class AlloyMethod(enum.IntEnum):
-    """Enum used a bit flag describing the method used to compute an alloy
-    parameters.
-
-    """
-
-    TERNARY_ALLOY = 2**0
-
-
-    QUATERNARY_ALLOY = 2**1
-
-
-
-@njit
-def make_alloy(method, fractions, materials, bowing_parameter, temperature=0, preuffer=False):
+def make_alloy(fractions, materials, temperature=0, pfeuffer=False):
     """Compute the parameters of an alloy using the specified method.
 
     Parameters
@@ -227,20 +228,45 @@ def make_alloy(method, fractions, materials, bowing_parameter, temperature=0, pr
     if len(fractions) > 2:
         raise RuntimeError('Only binary alloys are supported.')
 
+
+
     m1, m2 = materials
-    m1.eg = m1.eg - m1.alpha * temperature**2 / (temperature + m1.beta)
-    m2.eg = m2.eg - m2.alpha * temperature**2 / (temperature + m2.beta)
+    all_compounds = list(set(m1.compounds) | set(m2.compounds))
 
-    if method & AlloyMethod.TERNARY_ALLOY:
-        alloy = [fractions[0]*p1 + fractions[1]*p2 - fractions[0] * fractions[1] * C
-                 for p1, p2, C in zip(m1.as_tuple(), m2.as_tuple(), bowing_parameter.as_tuple())]
+    A = np.empty((2, len(all_compounds)))
+    for i in range(len(all_compounds)):
+        A[i, 0] = m1.compounds[all_compounds[i]] if all_compounds[i] in m1.compounds.keys() else 0
+        A[i, 1] = m2.compounds[all_compounds[i]] if all_compounds[i] in m2.compounds.keys() else 0
 
-    if method & AlloyMethod.QUATERNARY_ALLOY:
-        alloy = [fractions[0]*p1 + fractions[1]*p2
-                 for p1, p2 in zip(m1.as_tuple(), m2.as_tuple())]
+    compounds_fractions = np.dot(A, fractions)
 
+    # Ternary alloy
+    if len(all_compounds) == 2:
+        bowing_parameter = load_bowing_parameters(all_compounds)
 
-    if preuffer:
+        m1 = load_material_parameters(all_compounds[0])
+        m2 = load_material_parameters(all_compounds[1])
+
+        m1.eg = m1.eg - m1.alpha * temperature**2 / (temperature + m1.beta)
+        m2.eg = m2.eg - m2.alpha * temperature**2 / (temperature + m2.beta)
+
+        alloy = {n : compounds_fractions[0]*p1 + compounds_fractions[1]*p2 - compounds_fractions[0] * compounds_fractions[1] * C
+                 for n, p1, p2, C in zip(MATERIAL_PARAMETERS, m1.as_tuple(), m2.as_tuple(), bowing_parameter.as_tuple())}
+        compounds = {all_compounds[0] : compounds_fractions[0], all_compounds[1] : compounds_fractions[1]}
+
+    # Quaternary alloy
+    elif len(all_compounds) == 3:
+        m1.eg = m1.eg - m1.alpha * temperature**2 / (temperature + m1.beta)
+        m2.eg = m2.eg - m2.alpha * temperature**2 / (temperature + m2.beta)
+
+        alloy = {n : fractions[0]*p1 + fractions[1]*p2
+                 for n,p1, p2 in zip(MATERIAL_PARAMETERS, m1.as_tuple(), m2.as_tuple())}
+        compounds = {all_compounds[0] : compounds_fractions[0], all_compounds[1] : compounds_fractions[1], all_compounds[2] : compounds_fractions[2]}
+
+    else:
+        raise ValueError()
+
+    if pfeuffer:
         kin = np_float(0.5)/materials[0].electron_mass  # hb^2/(2*m_0)
 
         # Compute the parameters A, G, H1 and H2 of the docs
@@ -269,16 +295,16 @@ def make_alloy(method, fractions, materials, bowing_parameter, temperature=0, pr
         h1_mix = (f_f[2]*f_s[2] / (fractions[1]*f_f[2] + fractions[0]*f_s[2]))
 
         # gamma 1
-        alloy[GAMMA1_INDEX] =\
+        alloy['gamma_1'] =\
             -1 - 1/(3*kin)*(a_mix + 2*g_mix + 2*h1_mix + 2*h2_mix)
         # XXX Hack to get the same results as Wouter
 #        alloy[GAMMA1_INDEX] =\
 #            4.1 - 2.8801*fractions[1] + 0.3159*fractions[1]**2 - 0.0658*fractions[1]**3
         # gamma 2
-        alloy[GAMMA2_INDEX] = - 1/(6*kin)*(a_mix + 2*g_mix - h1_mix - h2_mix)
+        alloy['gamma_2'] = - 1/(6*kin)*(a_mix + 2*g_mix - h1_mix - h2_mix)
         # gamma 3
-        alloy[GAMMA3_INDEX] = - 1/(6*kin)*(a_mix - g_mix + h1_mix - h2_mix)
+        alloy['gamma_3'] = - 1/(6*kin)*(a_mix - g_mix + h1_mix - h2_mix)
         # kappa
-        alloy[KAPPA_INDEX] = -1/3 - 1/(6*kin)*(a_mix - g_mix - h1_mix + h2_mix)
+        alloy['kappa'] = -1/3 - 1/(6*kin)*(a_mix - g_mix - h1_mix + h2_mix)
 
-    return np.array(alloy, dtype=np_float)
+    return MaterialParameters(compounds, **alloy)

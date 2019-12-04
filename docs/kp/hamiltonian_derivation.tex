@@ -1,15 +1,14 @@
 \documentclass[prb,aps]{revtex4}
 
 \usepackage[english]{babel}
-\usepackage{lmodern}
 \usepackage[utf8]{inputenc}
-% Jean hare package to translate utf8 character in tex code
+% Jean Hare package to translate utf8 character in tex code
 \usepackage{packages/utf8ext}
-\usepackage[T1]{fontenc}   
+\usepackage[T1]{fontenc}
 \usepackage{amsmath, mathtools}
-\usepackage{amssymb,amsfonts} % tous les symboles math�matique de AMS
-\usepackage{bm}	% lettre math�matiques grasses et 
-\usepackage{bbm,upgreek} % lettres math blackboard et grecques pour ?m et pour ?-decay
+\usepackage{amssymb,amsfonts}
+\usepackage{bm}
+\usepackage{bbm,upgreek}
 \usepackage{graphicx}
 \usepackage{packages/quantum} % Jean Hare macros for quantum mechs
 
@@ -17,48 +16,51 @@
 
 \newcommand{\tr}[1]{{\vphantom{#1}}^{\mathit t}{#1}}
 
+\parskip = \baselineskip
+
 \begin{document}
 
-\title{Notes on k.p theory for HgTe / CdTe structures}
+\title{Notes on k.p theory for InAs structures}
 \date{\today}
  \maketitle
- 
+
 
 \section{8 Bands Model:}
 
 	\subsection{Bulk Materials}
-		
-		{\bf Ref.}:  Novik et al. PRB {\bf 72}, 035321 (2005)
-		 
-		We consider a "quasi -2D" junction (question about validity of 2D here) described by a Kane model involving 8 bands (required to include 
-the hybridization between conduction and valence bands in narrow gap semiconductors). We consider the growth axis to be along z and we note $k_\parallel^2 = k_x^2 + k_y^2$ and $k_+ = k_x + i\,k_y$ and $k_- = k_x - i\,k_y$.
-		
-		Basis of states used : 
-		
+
+		{\bf Ref. on HgTe}:  Novik et al. PRB {\bf 72}, 035321 (2005)
+
+		We consider a "quasi-2D" junction (question about validity of 2D here) described by a Kane model involving 8 bands (required to include the hybridization between conduction and valence bands in narrow gap semiconductors). We consider the growth axis to be along z and we note $k_\parallel^2 = k_x^2 + k_y^2$ and $k_+ = k_x + i\,k_y$ and $k_- = k_x - i\,k_y$.
+
+		Basis of states used :
+
 		\begin{eqnarray}
 			&& u_1(r) = \kt|Γ_6,+1/2> ; u_2(r) = \kt|Γ_6,-1/2> \\
 			&& u_3(r) = \kt|Γ_8,+3/2> ; u_4(r) = \kt|Γ_8,+1/2> ; u_5(r) = \kt|Γ_8,-1/2> ; u_6(r) = \kt|Γ_8,-3/2> \\
 			&& u_7(r) = \kt|Γ_7,+1/2> ; u_8(r) = \kt|Γ_7,-1/2>
-		\end{eqnarray}
-		
-		The reduced Hamiltonian reads 
+        \end{eqnarray}
+
+        To symmetrize the P terms we follow (loosely) https://journals.aps.org/prb/pdf/10.1103/PhysRevB.81.235314 taking f = 0.5, which result in simply considering the anti-commutator of $P$ and $k_z$. We cannot simply follow Novik et al. PRB {\bf 72}, 035321 (2005) since in HgTe/HgCdTe hetero structures P is constant through the structure.
+
+		The reduced Hamiltonian reads
 		\begin{equation}
 		    \renewcommand{\arraystretch}{3.5}
 			\label{eq:H0}
 			H^0=
 			\begin{pmatrix}
-				T & 0 &  -\sqrt{\frac12} P k_+  & \sqrt{\frac23} P k_z &\sqrt{\frac16} P k_- & 0  & -\sqrt{\frac13} P k_z & -\sqrt{\frac13} P k_-\\
-				0 & T & 0 & -\sqrt{\frac16} P k_+ &  \sqrt{\frac23} P k_z & \sqrt{\frac12} P k- & -\sqrt{\frac13} P k_+ & \sqrt{\frac13} P k_z\\
+				T & 0 &  -\sqrt{\frac12} P k_+  & \sqrt{\frac{1}{6}} \{P, k_z\} &\sqrt{\frac16} P k_- & 0  & -\sqrt{\frac{1}{12}} \{P, k_z\} & -\sqrt{\frac13} P k_-\\
+				0 & T & 0 & -\sqrt{\frac16} P k_+ &  \sqrt{\frac{1}{6}} \{P, k_z\} & \sqrt{\frac12} P k- & -\sqrt{\frac13} P k_+ & \sqrt{\frac{1}{12}} \{P, k_z\}\\
 				-\sqrt{\frac12}  k_- P & 0 & U+V & -\overline{S}_- & R & 0 & \sqrt{\frac12} \overline{S}_- & -\sqrt{2} R \\
-				\sqrt{\frac23} k_z P & -\sqrt{\frac16} k_- P & - \overline{S}_-^\dagger & U-V & C & R & \sqrt{2} V & -\sqrt{\frac32} \tilde{S}_- \\
-				\sqrt{\frac16} k_+ P & \sqrt{\frac23} k_z P & R^\dagger & C^\dagger & U-V & \overline{S}_+^\dagger & -\sqrt{\frac32} \tilde{S}_+ & -\sqrt{2} V \\
+				\sqrt{\frac{1}{6}} \{P, k_z\} & -\sqrt{\frac16} k_- P & - \overline{S}_-^\dagger & U-V & C & R & \sqrt{2} V & -\sqrt{\frac32} \tilde{S}_- \\
+				\sqrt{\frac16} k_+ P & \sqrt{\frac{1}{6}} \{P, k_z\} & R^\dagger & C^\dagger & U-V & \overline{S}_+^\dagger & -\sqrt{\frac32} \tilde{S}_+ & -\sqrt{2} V \\
 				0 & \sqrt{\frac12} k_+ P & 0 & R^\dagger & \overline{S}_+ & U+V & \sqrt{2} R^\dag & \sqrt{\frac12} \overline{S}_+ \\
-				-\sqrt{\frac13} k_z P & -\sqrt{\frac13} k_- P & \sqrt{\frac12} \overline{S}^{\dag}_- & \sqrt{2} V & -\sqrt{\frac32} \tilde{S}^\dag_+ & \sqrt{2} R & U - Δ & C \\
-				-\sqrt{\frac13} k_+ P & \sqrt{\frac13} k_z P & -\sqrt{2} R^\dag & -\sqrt{\frac32} \tilde{S}_-^\dag & -\sqrt{2} V & \sqrt{\frac12} \overline{S}_+^\dag & C^\dag & U - Δ
+				-\sqrt{\frac{1}{12}} \{P, k_z\} & -\sqrt{\frac13} k_- P & \sqrt{\frac12} \overline{S}^{\dag}_- & \sqrt{2} V & -\sqrt{\frac32} \tilde{S}^\dag_+ & \sqrt{2} R & U - Δ & C \\
+				-\sqrt{\frac13} k_+ P & \sqrt{\frac{1}{12}} \{P, k_z\} & -\sqrt{2} R^\dag & -\sqrt{\frac32} \tilde{S}_-^\dag & -\sqrt{2} V & \sqrt{\frac12} \overline{S}_+^\dag & C^\dag & U - Δ
 			\end{pmatrix}
 		\end{equation}
-		
-		 where 
+
+		 where
 		 \begin{align}
 			 T &= E_c(z) + \frac{ħ^2}{2\,m_0} \left( (2\,F+1) k_\parallel^2 + k_z (2\,F+1) k_z\right)  \\
 			 U &= E_v(z) - \frac{ħ^2 }{2\,m_0} \left( γ_1 k_\parallel^2 + k_z γ_1 k_z \right) \\
@@ -66,88 +68,56 @@ the hybridization between conduction and valence bands in narrow gap semiconduct
 			R &= - \frac{ħ^2 }{2\,m_0} \sqrt{3} \left( μ\,k_+^2 - \overline{γ} k_-^2 \right) \\
 			\overline{S}_\pm &= - \frac{ħ^2 }{2\,m_0} \sqrt{3}  k_\pm \Big( \{ γ_3 , k_z \} + [κ , k_z] \Big) \\
 			\tilde{S}_\pm &= - \frac{ħ^2 }{2\,m_0} \sqrt{3}  k_\pm \Big( \{ γ_3 , k_z \} - \frac13 [κ , k_z] \Big) \\
-			C &= \frac{ħ^2 }{m_0} k_- [κ , k_z ]  . 
+			C &= \frac{ħ^2 }{m_0} k_- [κ , k_z ]  .
 		\end{align}
-		
-		We choose the unit $nm^{-1}$ for the momenta, $eV$ for the energies, and define the "reduced mass"  $\tilde{m}_0$ such that 
+
+		We choose the unit $nm^{-1}$ for the momenta, $eV$ for the energies, and define the "reduced mass"  $\tilde{m}_0$ such that
 		$$
-		[eV] = 
-		\frac{\tilde{k}^2}{2\tilde{m}_0}  = 
-		\frac{ħ^2 . k^2 }{2 m_0} 
-		\Rightarrow 
+		[eV] =
+		\frac{\tilde{k}^2}{2\tilde{m}_0}  =
+		\frac{ħ^2 . k^2 }{2 m_0}
+		\Rightarrow
 		\tilde{m}_0 = \frac{9.109E^{-31} \times 1.6E^{-19}}{(1.055E^{-34})^2 \times 10^{18}} \simeq 13.105
 		$$
-		
-		 The material dependent parameters are given by:
-		 \begin{center}
-		 \begin{tabular}{| c | c | c | c  | c  | c  | c  | c  | c |}
-		     \hline
-			 & $E_g$ & $Δ$ & $E_P = 2 m_0 P^2 / ħ^2$ & F & $γ_1$ & $γ_2$ & $γ_3$ & $κ$ \\
-			 \hline 
-			 HgTe & -0.303 eV & 1.08 eV & 18.8 eV  & 0 & 4.1 & 0.5 & 1.3 & -0.4 \\
-			 CdTe & 1.606 eV & 0.91 eV & 18.8 eV  & -0.09 & 1.47 & -0.28 & 0.03 & -1.31\\
-			 \hline
-		 \end{tabular}
-		 \end{center}
-		 
-		where $E_{g} \equiv E_{c} - E_{v}$ ($E_v$ = 0 in HgTe, -570 meV in CdTe)
-		and $μ=(γ_3 - γ_2)/2$ while $\overline{γ}=(γ_3 + γ_2)/2$
-		 
-		
-		For a pure HgTe sample, in the bulk we have no $z$ dependance of the parameters, and the commutators with $k_z$ vanish : the matrix reduce to 
-		\begin{align}
-			 T &= E_c(z) + \frac{ħ^2}{2\,m_0} \left(  k_\parallel^2 + k_z^2 \right)  \\
-			 U &= E_v(z) - \frac{ħ^2 }{2\,m_0}γ_1  \left(  k_\parallel^2 + k_z^2  \right) \\
-			 V &=  - \frac{ħ^2 }{2\,m_0} γ_2 \left(  k_\parallel^2 -2 k_z^2  \right) \\
-			R &= - \frac{ħ^2 }{2\,m_0} \sqrt{3} \left( μ k_+^2 - \overline{γ} k_-^2 \right) \\
-			\overline{S}_\pm &= \tilde{S}_\pm = 
-			- \frac{ħ^2 }{2\,m_0}\,\sqrt{3}\,γ_3\,2\,k_\pm\,k_z  \\
-			C &= 0 
-		\end{align}
-		
-		
-		{\bf Comment} : Zaheer et al., arxiv:1206.0684 : tensile strained HgTe along the (111) axis : different symmetry and k.p theory. 
-		Note that Fu and Kane PRB {\bf 76}, 045302 (2007) also consider a constant along the (111) direction to open the gap ! But works 
-		for (001) constraint apparently (?). 
+
+		The material dependent parameters are taken from Vurgaftman, I., Meyer, J. R. \& Ram-Mohan, L. R. Band parameters for III–V compound semiconductors and their alloys. Journal of Applied Physics 89, 5815–5875 (2001). When not specified the Luttinger parameter $κ$ is computed using $κ = γ_3 + \frac{2}{3} γ_2 - \frac{1}{3} γ_1 - \frac{2}{3}$ (see \url{https://www.nextnano.de/nextnano3/input_parser/database/binary-zb-default.html}).
 
 
 	\subsection{Incorporating Strain}
-		
-		{\bf Ref.}: 
+
+		{\bf Ref.}:
 		\begin{enumerate}
 			\item Section 2.3 of book by Winkler
 			\item Appendix C of Novik et al.
 			\item Supplementary of Brüne et al. , PRL {\bf 106}, 126803 (2011)
-			\item section IV of Chu et al., PRB {\bf 83}, 075110 (2011). 
+			\item section IV of Chu et al., PRB {\bf 83}, 075110 (2011).
+			\item http://www.iue.tuwien.ac.at/phd/karlowatz/node8.html
 		\end{enumerate}
-		
-		The Hamiltonian is obtained by the substitution $k_i k_j  \to ϵ_{ij} $ where $ϵ_{ij}$ is the strain tensor 
-		and the following replacement : 
+
+		The Hamiltonian is obtained by the substitution $k_i k_j  \to ϵ_{ij} $ where $ϵ_{ij}$ is the strain tensor and the following replacement :
 		\begin{align}
-			\frac{ħ^2}{2\,m_0} (2\,F+1) &\to C \simeq 3.69  eV\\
-			\frac{ħ^2}{ m_0} γ_1&\to - 2 a \simeq -2 \times 3.69  eV \\
-			\frac{ħ^2}{ m_0} γ_2 &\to -  b \simeq -1.5 eV \\
-			\frac{ħ^2}{ m_0} γ_3&\to - \frac{1}{\sqrt{3}} d 
+			\frac{ħ^2}{2\,m_0} (2\,F+1) &\to a_c\\
+			\frac{ħ^2}{ m_0} γ_1&\to - 2 a_d\\
+			\frac{ħ^2}{ m_0} γ_2 &\to -  b\\
+			\frac{ħ^2}{ m_0} γ_3&\to - \frac{1}{\sqrt{3}} d
 		\end{align}
-		
-		
-		Denoting by $a$ the lattice spacing, the define the relative lattice mismatch by 
+
+		Denoting by $a$ the lattice spacing, the define the relative lattice mismatch by
 		\begin{equation}
-		ϵ = \frac{ a_{\textrm{CdTe}} - a_{\textrm{HgTe}} } {a_{\textrm{HgTe}}} \simeq 0.003
+		ϵ = \frac{ a_{\textrm{substrate}} - a_{\textrm{layer}} } {a_{\textrm{layer}}}
 		\end{equation}
-		
-        For a CdTe substrate oriented along (001), we have a strain tensor with only non vanishing components given by 
+
+        For a substrate oriented along (001), we have a strain tensor with only non vanishing components given by
 		\begin{align}
-			ϵ_{xx} &= ϵ_{yy} = ϵ  ;\\ 
+			ϵ_{xx} &= ϵ_{yy} = ϵ  ;\\
 			ϵ_{zz} &= -2 \frac{C_{12}}{C_{11}} ϵ
 		\end{align}
-		$C_{12},C_{11}$ are elastic stiffness, with $C_{12}/C_{11} = 0.68$. 
-		 
-		Brüne et al. give a gap opened by constraint given by 
-		$E_g = -b (ϵ_{xx} + ϵ_{yy} - 2 ϵ_{zz} )  = -b\,2\left(1 + 2\,\frac{C_{12}}{C_{11}}\right) ϵ \simeq 4.72 (-b)ϵ \simeq 
-		21 meV$ with $b=-1.5 eV$ the uniaxial strain. 
-		
-		From (\ref{eq:H0}), we get the strain Bir-Pikus Hamiltonian 
+		$C_{12},C_{11}$ are elastic stiffness, with $C_{12}/C_{11}$.
+
+		Brüne et al. give a gap opened by constraint given by
+		$E_g = -b (ϵ_{xx} + ϵ_{yy} - 2 ϵ_{zz} )  = -b\,2\left(1 + 2\,\frac{C_{12}}{C_{11}}\right) ϵ$
+
+		From (\ref{eq:H0}), we get the strain Bir-Pikus Hamiltonian
 		\begin{equation}
 			\label{eq:H-BP}
 			H_{BP}=
@@ -160,24 +130,23 @@ the hybridization between conduction and valence bands in narrow gap semiconduct
 				0 & 0 & 0 & R_{BP}^\dagger & S_{BP}^+ & U_{BP}+V_{BP}  \\
 			\end{pmatrix}
 		\end{equation}
-		with  
+		with
 		\begin{align}
-			T_{BP} &=  C~ \left(  ϵ_{xx} + ϵ_{yy} + ϵ_{zz}  \right)  \\
-			U_{BP} &= a~ \left(  ϵ_{xx} + ϵ_{yy} + ϵ_{zz}  \right)   \\
+			T_{BP} &=  a_c~ \left(  ϵ_{xx} + ϵ_{yy} + ϵ_{zz}  \right)  \\
+			U_{BP} &= a_v~ \left(  ϵ_{xx} + ϵ_{yy} + ϵ_{zz}  \right)   \\
 			V_{BP} &= \frac{b}{2}~ \left(  ϵ_{xx} + ϵ_{yy} -2  ϵ_{zz}  \right)  \\
 			R_{BP} &= - \frac{ħ^2 }{2m_0} \sqrt{3} \left( γ_2( ϵ_{yy} - ϵ_{xx}) + 2 i γ_3  ϵ_{xy} \right) \\
-			S^\pm_{BP} &= - \frac{ħ^2 }{2\,m_0} \sqrt{3} γ_3\,2\,(ϵ_{xz} \pm ϵ_{yz} )  
+			S^\pm_{BP} &= - \frac{ħ^2 }{2\,m_0} \sqrt{3} γ_3\,2\,(ϵ_{xz} \pm ϵ_{yz} )
 		\end{align}
-		
-		For the specific case of the (001) constraint, we get 
+
+		For the specific case of the (001) constraint, we get
 		\begin{align}
-			T_{BP} &= C~ Tr(ϵ) = C \left( 1-\frac{C_{12}}{C_{11}}) \right) 2 ϵ  \\
-			U_{BP} &= a~ Tr(ϵ) = a \left( 1-\frac{C_{12}}{C_{11}}) \right) 2 ϵ    \\
+			T_{BP} &= a_c~ Tr(ϵ) = a_c \left( 1-\frac{C_{12}}{C_{11}}) \right) 2 ϵ  \\
+			U_{BP} &= a_v~ Tr(ϵ) = a_v \left( 1-\frac{C_{12}}{C_{11}}) \right) 2 ϵ    \\
 			V_{BP} &= \frac{b}{2}~ \left( ϵ_{xx} + ϵ_{yy} - 2\,ϵ_{zz} \right) = \frac{b}{2}   \left( 1+\frac{C_{12}}{C_{11}})   \right) 2 ϵ   \\
 			R_{BP} &= S^\pm_{BP} =0
 		\end{align}
-		with $C=a=3.69 eV$ and $b=1.5 eV$, and a simpler matrix 
-		
+
 		\begin{equation}
 			\label{eq:H-BP2}
 			H_{BP}=
@@ -187,7 +156,7 @@ the hybridization between conduction and valence bands in narrow gap semiconduct
 				0 & 0 & U_{BP}+V_{BP} & 0& 0 & 0  \\
 				0 & 0 &0 & U_{BP}-V_{BP} & 0 & 0  \\
 				0& 0 & 0& 0 & U_{BP}-V_{BP} &0 \\
-				0 & 0 & 0 & 0 & 0 & U_{BP}+V_{BP}  
+				0 & 0 & 0 & 0 & 0 & U_{BP}+V_{BP}
 			\end{pmatrix}
 		\end{equation}
 
@@ -195,63 +164,63 @@ the hybridization between conduction and valence bands in narrow gap semiconduct
 \section{Numerical Lattice Model:}
 
     We put the model on a fictitious lattice in the $z$ direction : in $x$ and $y$ directions the model remain continuous. The lattice spacing in this $z$ direction is denoted $a$, and we should focus on $k_z \ll a^{-1}$, irrespective of the condition of applicability of the $k.p$ theory.
-    
+
     In order to obtain terms that are hermitic, we will use a symmetric expression of the discrete derivative at first order ($\partial_z ϕ \sim \frac{ϕ_{n+1} - ϕ_{n-1}}{2a}$). However to avoid introducing an artificial elementary cell containing two sites, we will derive second order derivative starting from the discrete derivative on the right ($\partial_z ϕ \sim \frac{ϕ_{n+1} - ϕ_{n}}{a}$).
 
     \subsubsection{$k_z$}
 
 		We replace $k_z ϕ(z) = - i  \partial_{z} ϕ(z)  $ by $Δ_{n} ψ_{n} = -i (ψ_{n+1} - ψ_{n-1})/(2a)$
-		
+
 		which gives in the Hamiltonian:
 		\begin{align}
 		    h_{n, n+1} &= -\dfrac{i}{2\,a}\\
 		    h_{n, n-1} &= \dfrac{i}{2\,a}
 		\end{align}
-		
+
 
     \subsubsection{$k_z γ(z) k_z$}
 
-		We consider a term of the Hamiltonian the form $k_{z} γ(z) k_{z}$. Let us consider a matrix element of this Hamiltonian : 
+		We consider a term of the Hamiltonian the form $k_{z} γ(z) k_{z}$. Let us consider a matrix element of this Hamiltonian :
 		\begin{align}
-			\mv< ψ | k_{z} γ(z) k_{z} | ϕ > 
+			\mv< ψ | k_{z} γ(z) k_{z} | ϕ >
 			&= \int_{z} \overline{ψ}(z) \left( -i \partial_{z}  \right)  γ(z) \left( -i \partial_{z}  \right) ϕ(z)  \\
 			&= - \int_{z} \overline{ψ}(z)  \partial_{z}   γ(z)  \partial_{z}  ϕ(z)  \\
 			& = + \int_{z}  \left( \partial_{z}\overline{ψ}(z) \right)    γ(z)  \left( \partial_{z}  ϕ(z)  \right)
 		\label{eq:discretederivative}
 		\end{align}
-		At this level, we can check easily the hermiticity of this Hamiltonian term.  
-		
-		To discretize this term, we start with the final expression (\ref{eq:discretederivative}) and replace 
-		$\partial_{z} ϕ(z)  $ by $Δ_{n} ψ_{n} = (ψ_{n+1} - ψ_{n})/a$. We get : 
+		At this level, we can check easily the hermiticity of this Hamiltonian term.
+
+		To discretize this term, we start with the final expression (\ref{eq:discretederivative}) and replace:
+		$\partial_{z} ϕ(z)  $ by $Δ_{n} ψ_{n} = (ψ_{n+1} - ψ_{n})/a$. We get :
 		\begin{align}
-			\mv< ψ | k_{z} γ(z) k_{z} | ϕ > 
-			&= 
-			\frac{1}{a^2} \sum_{n} 
-			\left( \overline{ψ}_{n+1} - \overline{ψ}_{n} \right) 
+			\mv< ψ | k_{z} γ(z) k_{z} | ϕ >
+			&=
+			\frac{1}{a^2} \sum_{n}
+			\left( \overline{ψ}_{n+1} - \overline{ψ}_{n} \right)
 			γ_{n}
 			\left( ϕ_{n+1} - ϕ_{n} \right)
 			\\
-			&= 
+			&=
 			\frac{1}{a^2} \sum_{n}  \overline{ψ}_{n} \left( γ_{n-1}+γ_{n}\right) ϕ_{n}
 			-\frac{1}{a^2} \sum_{n}  \overline{ψ}_{n} γ_{n} ϕ_{n+1}
-			-\frac{1}{a^2} \sum_{n}  \overline{ψ}_{n} γ_{n-1} ϕ_{n-1}, 
+			-\frac{1}{a^2} \sum_{n}  \overline{ψ}_{n} γ_{n-1} ϕ_{n-1},
 		\end{align}
-		corresponding to matrix elements of the discretized hamiltonian 
+		corresponding to matrix elements of the discretized hamiltonian
 		\begin{align}
 			h_{n,n} & = \frac{1}{a^2}  \left( γ_{n-1}+γ_{n}\right) \\
 			h_{n,n+1} &= - \frac{1}{a^2} γ_{n} \\
-			h_{n,n-1} &= - \frac{1}{a^2} γ_{n-1} 
+			h_{n,n-1} &= - \frac{1}{a^2} γ_{n-1}
 		\end{align}
-		
+
 		No derivative of gamma here ! And hermiticity is naturally preserved in this procedure (we treat the ket and the bra on equal footings throughout the procedure).
-		
-		If we had used the symmetric expression of the derivative here we would have ended with terms only coupling $n$ and $n\pm2$ which would have resulted in the creation of an artificial sub lattice.
+
+		\textbf{Note:} If we had used the symmetric expression of the derivative here we would have ended with terms only coupling $n$ and $n\pm2$ which would have resulted in the creation of an artificial sub lattice.
 
 
 	\subsubsection{$[κ(z),k]$}
-	
+
 		\begin{align}
-			\mv< ψ | [κ(z),k_z] | ϕ > 
+			\mv< ψ | [κ(z),k_z] | ϕ >
 			&= \int_{z} \overline{ψ}(z) \left( κ(z)(-i\partial_z) +i\partial_z κ(z) \right)ϕ(z) \nonumber\\
 			&=-i\int_{z} \overline{ψ}(z)  κ(z)\partial_z  ϕ(z) -i\int_{z} \partial_z \left(\overline{ψ}(z)\right)  κ(z)ϕ(z) \nonumber\\
 			&=-i\sum_n \overline{ψ}_n κ_n \frac{1}{2a}\left(ϕ_{n+1} - ϕ_{n-1}\right) -i\sum_n \frac{1}{2a}\left( \overline{ψ}_{n+1}-\overline{ψ}_{n-1}\right)κ_nϕ_n \nonumber\\
@@ -262,34 +231,34 @@ the hybridization between conduction and valence bands in narrow gap semiconduct
 			h_{n,n+1} &= \frac{i}{2a} (κ_{n+1}-κ_{n})\\
 			h_{n,n-1}  &= \frac{i}{2a} (κ_n - κ_{n-1})
 		\end{align}
-		
+
 		Hermiticity is satisfied and we find the commutator vanishes in the bulk limit.
 
 
 	\subsubsection{$\left\{γ(z),k\right\}$}
-	
+
 		\begin{align}
-			\mv< ψ | \left\{γ(z),k_z\right\} | ϕ > 
+			\mv< ψ | \left\{γ(z),k_z\right\} | ϕ >
 			&=-i\int_{z} \overline{ψ}(z)  γ(z)(\partial_z  ϕ(z)) + i\int_{z} (\partial_z \left(\overline{ψ}(z)\right)  γ(z)ϕ(z) \nonumber\\
 			&=-i\sum_n \overline{ψ}_n γ_n \frac{1}{2a}\left(ϕ_{n+1} - ϕ_{n-1}\right) +i\sum_n \frac{1}{2a}\left( \overline{ψ}_{n+1}-\overline{ψ}_{n-1}\right)γ_nϕ_n \nonumber\\
 			&= \frac{i}{2a} \sum_n \overline{ψ}_n \left[-\left(γ_{n}+γ_{n+1} \right)ϕ_{n+1} + \left(γ_{n}+γ_{n-1} \right)ϕ_{n-1}\right]
 		\end{align}
-		
+
 		hence
-		
+
 		\begin{align}
 			h_{n,n+1} &= -\frac{i}{2a} (γ_{n}+γ_{n+1})\\
 			h_{n,n-1}  &= \frac{i}{2a} (γ_n + γ_{n-1})
 		\end{align}
-		
-		Hermiticity is satisfied and we find the good bulk limit (i.e. twice $γ \times$ the derivative).\\
-	
-	\subsubsection{Discrete Hamiltonian:}	
-		
-    As a conclusion, the discretized Hamiltonian will take the form of tri-diagonal block matrix. We give below the expression of the main diagonal block and the upper diagonal block:\\
 
-    \paragraph{Main diagonal:}
-    
+		Hermiticity is satisfied and we find the good bulk limit (i.e. twice $γ \times$ the derivative).
+
+	\subsubsection{Discrete Hamiltonian:}
+
+    As a conclusion, the discretized Hamiltonian will take the form of tri-diagonal block matrix. We give below the expression of the main diagonal block and the upper diagonal block:
+
+    \paragraph{Main diagonal:\\}
+
     \begin{equation}
         \renewcommand{\arraystretch}{3.5}
 	    H_{main}[i] =
@@ -304,17 +273,17 @@ the hybridization between conduction and valence bands in narrow gap semiconduct
 			-\sqrt{\frac13} k_+ P & 0 & -\sqrt{2} R^\dag & 0 & -\sqrt{2} V_0[i] & 0 & 0 & U_0[i] - Δ
 		\end{pmatrix}
     \end{equation}
-    
-    where 
+
+    where
 	\begin{align}
 		 T_0[i] &= E_c[i] + \frac{ħ^2}{2\,m_0} \left( (2\,F + 1) k_\parallel^2 + \dfrac{2\,F[i] + 2\,F[i-1] + 2}{a^2} \right) + T_{BP} \\
 		 U_0[i] &= E_v[i] - \frac{ħ^2 }{2\,m_0} \left( γ_1 k_\parallel^2 + \dfrac{γ_1[i] + γ_1[i-1]}{a^2} \right) + U_{BP}\\
 		 V_0[i] &=  - \frac{ħ^2}{2\,m_0} \left( γ_2 k_\parallel^2 - 2 \dfrac{γ_2[i] + γ_2[i-1]}{a^2} \right) + V_{BP}\\
 		R &= - \frac{ħ^2}{2\,m_0} \sqrt{3} \left( μ\,k_+^2 - \overline{γ} k_-^2 \right)
 	\end{align}
-	
+
 	In the implementation to be able to go smoothly from a 4 bands to an 8 bands model, we will write the Hamiltonian using the following order: $\kt|Γ_6,+1/2>, \kt|Γ_6,-1/2>, \kt|Γ_8,+1/2>, \kt|Γ_8,-1/2>, \kt|Γ_8,+3/2>, \kt|Γ_8,-3/2>, \kt|Γ_7,+1/2>, \kt|Γ_7,-1/2>$. Which leads to writing the Hamiltonian as follow:
-	
+
 	\begin{equation}
 	    \renewcommand{\arraystretch}{3.5}
 	    H_{main}[i] =
@@ -329,12 +298,11 @@ the hybridization between conduction and valence bands in narrow gap semiconduct
 			-\sqrt{\frac13} k_+ P & 0 & 0 & -\sqrt{2} V_0[i] & -\sqrt{2} R^\dag & 0 & 0 & U_0[i] - Δ
 		\end{pmatrix}
     \end{equation}
-	
-	
-	\paragraph{Upper diagonal\\\\}
-	
+
+
+	\paragraph{Upper diagonal:\\}
 	When computing the contribution of conjugated terms one has to be careful since even if globally the Hamiltonian is hermitian each term independently is not. In particular, we have:
-	
+
 	\begin{align}
 	    C = \frac{ħ^2 }{m_0} k_- [κ , k_z ] &\rightarrow C[i, i+1] =  \frac{ħ^2}{m_0} k_-\,\dfrac{i}{2\,a}\left(κ[i+1]-κ[i]\right) \\
 	    C^\dag = - \frac{ħ^2}{m_0} k_+ [κ , k_z] &\rightarrow C^\dag[i, i+1] = - \frac{ħ^2}{m_0} k_+\,\dfrac{i}{2\,a}\left(κ[i+1]-κ[i]\right) = C^*[i, i+1]\\
@@ -344,87 +312,87 @@ the hybridization between conduction and valence bands in narrow gap semiconduct
 	    \tilde{S}_\pm = - \frac{ħ^2 }{2\,m_0} \sqrt{3}  k_\pm \Big( \{ γ_3 , k_z \} - \frac13 [κ , k_z] \Big) &\rightarrow \tilde{S}_\pm[i, i+1] = - \frac{ħ^2 }{2\,m_0} \sqrt{3}  k_\pm \left( -\dfrac{i}{2a}\left(γ_3[i] + γ_3[i+1]\right) - \dfrac{i}{6\,a}\left(κ[i+1]-κ[i]\right) \right)\\
 	    \tilde{S}_\pm^\dag = - \frac{ħ^2 }{2\,m_0} \sqrt{3}  k_\mp \Big( \{ γ_3 , k_z \} + \frac13 [κ , k_z] \Big) &\rightarrow \tilde{S}_\pm^\dag[i, i+1] = - \frac{ħ^2 }{2\,m_0} \sqrt{3}  k_\pm \left( -\dfrac{i}{2a}\left(γ_3[i] + γ_3[i+1]\right) + \dfrac{i}{6\,a}\left(κ[i+1]-κ[i]\right) \right)
 	\end{align}
-	
+
 	Paying a close attention to the above one can write:
-	
+
 	\begin{equation}
 	    \renewcommand{\arraystretch}{3.5}
 	    H_{up} =
 	    \begin{pmatrix}
-			T_1[i] & 0 & 0 & -i\,\sqrt{\frac16} P \dfrac{1}{a} & 0 & 0 & -\sqrt{\frac{1}{12}} P \frac{1}{a} & 0 \\
-			0 & T_1[i] & 0 & 0 & -i\,\sqrt{\frac16} P \dfrac{1}{a} & 0 & 0 & \sqrt{\frac{1}{12}} P \frac{1}{a}\\
+			T_1[i] & 0 & 0 & -i\,\sqrt{\frac16} (P[i] + P[i+1]) \dfrac{1}{2a} & 0 & 0 & -\sqrt{\frac{1}{12}} (P[i] + P[i+1]) \dfrac{1}{2a} & 0 \\
+			0 & T_1[i] & 0 & 0 & -i\,\sqrt{\frac16} (P[i] + P[i+1]) \dfrac{1}{2a} & 0 & 0 & \sqrt{\frac{1}{12}} (P[i] + P[i+1]) \dfrac{1}{2a}\\
 			0 & 0 & U_1[i] + V_1[i] & -\overline{S}_-[i] & 0 & 0 & \sqrt{\frac12} \overline{S}_-[i] & 0 \\
-			-i\,\sqrt{\frac16} P \dfrac{1}{a} & 0 & - \overline{S}_-^\dagger[i] & U_1[i] - V_1[i] & C[i] & 0 & \sqrt{2} V_1[i] & -\sqrt{\frac32} \tilde{S}_-[i] \\
-			0 & -i\,\sqrt{\frac16} P \dfrac{1}{a} & 0 & C[i]^* & U_1[i] - V_1[i] & \overline{S}_+^\dagger[i] & -\sqrt{\frac32} \tilde{S}_+[i] & -\sqrt{2} V_1[i]\\
+			-i\,\sqrt{\frac16} (P[i] + P[i+1]) \dfrac{1}{2a} & 0 & - \overline{S}_-^\dagger[i] & U_1[i] - V_1[i] & C[i] & 0 & \sqrt{2} V_1[i] & -\sqrt{\frac32} \tilde{S}_-[i] \\
+			0 & -i\,\sqrt{\frac16} (P[i] + P[i+1]) \dfrac{1}{2a} & 0 & C[i]^* & U_1[i] - V_1[i] & \overline{S}_+^\dagger[i] & -\sqrt{\frac32} \tilde{S}_+[i] & -\sqrt{2} V_1[i]\\
 			0 & 0 & 0 & 0 & \overline{S}_+[i] & U_1[i] + V_1[i] & 0 &  \sqrt{\frac12} \overline{S}_+^\dag[i] \\
-			-\sqrt{\frac{1}{12}} P \frac{1}{a} & 0 & \sqrt{\frac12}\overline{S}_-^\dag[i] & \sqrt{2} V_1[i] & - \sqrt{\frac32} \tilde{S}_+^\dag[i] & 0 & U_1[i] & C[i] \\
-			0 & \sqrt{\frac{1}{12}} P \frac{1}{a} & 0 & -\sqrt{\frac32} \tilde{S}_-^\dag[i] & -\sqrt{2} V_1[i] & \sqrt{\frac12} \overline{S}_+^\dag[i] & C[i]^* & U_1[i]
+			-\sqrt{\frac{1}{12}} (P[i] + P[i+1]) \dfrac{1}{2a} & 0 & \sqrt{\frac12}\overline{S}_-^\dag[i] & \sqrt{2} V_1[i] & - \sqrt{\frac32} \tilde{S}_+^\dag[i] & 0 & U_1[i] & C[i] \\
+			0 & \sqrt{\frac{1}{12}} (P[i] + P[i+1]) \dfrac{1}{2a} & 0 & -\sqrt{\frac32} \tilde{S}_-^\dag[i] & -\sqrt{2} V_1[i] & \sqrt{\frac12} \overline{S}_+^\dag[i] & C[i]^* & U_1[i]
  		\end{pmatrix}
     \end{equation}
-    
-    where 
+
+    where
 	\begin{align}
 	    T_1[i] &= - \frac{ħ^2}{2\,m_0} \dfrac{2\,F[i] + 1}{a^2} \\
 		U_1[i] &= + \frac{ħ^2 }{2\,m_0} \dfrac{γ_1[i]}{a^2}\\
 		V_1[i] &= - \frac{ħ^2 }{2\,m_0} \dfrac{2\,γ_2}{a^2}\\
-		\overline{S}_\pm[i] 
+		\overline{S}_\pm[i]
 		&= - \frac{ħ^2}{2\,m_0} \sqrt{3}  k_\pm \left( -\dfrac{i}{2a}\left(γ_3[i] + γ_3[i+1]\right) + \dfrac{i}{2\,a}\left(κ[i+1]-κ[i]\right) \right) \nonumber\\
 		&= i\,\frac{ħ^2}{2\,m_0} \dfrac{\sqrt{3}}{2\,a}  k_\pm \left( γ_3[i] + γ_3[i+1] - κ[i+1] + κ[i] \right)\\
-		\overline{S}_\pm^\dag[i] 
+		\overline{S}_\pm^\dag[i]
 		&= - \frac{ħ^2}{2\,m_0} \sqrt{3}  k_\mp \left( -\dfrac{i}{2a}\left(γ_3[i] + γ_3[i+1]\right) - \dfrac{i}{2\,a}\left(κ[i+1]-κ[i]\right) \right) \nonumber\\
 		&= i\,\frac{ħ^2}{2\,m_0} \dfrac{\sqrt{3}}{2\,a}  k_\mp \left( γ_3[i] + γ_3[i+1] + κ[i+1] - κ[i] \right)\\
-		\tilde{S}_\pm[i] 
+		\tilde{S}_\pm[i]
 		&= - \frac{ħ^2 }{2\,m_0} \sqrt{3}  k_\pm \left( -\dfrac{i}{2a}\left(γ_3[i] + γ_3[i+1]\right) - \dfrac{i}{6\,a}\left(κ[i+1]-κ[i]\right) \right) \nonumber\\
 		&= i \frac{ħ^2 }{2\,m_0} \frac{\sqrt{3}}{2\,a}  k_\pm \left( γ_3[i] + γ_3[i+1] + \frac13\left(κ[i+1] - κ[i]\right) \right)\\
-	    \tilde{S}_\pm^\dag[i] 
+	    \tilde{S}_\pm^\dag[i]
 	    &= - \frac{ħ^2 }{2\,m_0} \sqrt{3}  k_\pm \left( -\dfrac{i}{2a}\left(γ_3[i] + γ_3[i+1]\right) + \dfrac{i}{6\,a}\left(κ[i+1]-κ[i]\right) \right)\nonumber\\
 	    &= i \frac{ħ^2 }{2\,m_0} \frac{\sqrt{3}}{2\,a}  k_\pm \left( γ_3[i] + γ_3[i+1] - \frac13 \left(κ[i+1]-κ[i]\right) \right)\\
-		C[i] &= \frac{ħ^2 }{m_0} k_-\,\dfrac{i}{2\,a}\left(κ[i+1]-κ[i]\right) 
+		C[i] &= \frac{ħ^2 }{m_0} k_-\,\dfrac{i}{2\,a}\left(κ[i+1]-κ[i]\right)
 	\end{align}
-	
+
 	In the implementation to be able to go smoothly from a 4 bands to an 8 bands model, we will write the Hamiltonian using the following order: $\kt|Γ_6,+1/2>, \kt|Γ_6,-1/2>, \kt|Γ_8,+1/2>, \kt|Γ_8,-1/2>, \kt|Γ_8,+3/2>, \kt|Γ_8,-3/2>, \kt|Γ_7,+1/2>, \kt|Γ_7,-1/2>$. Which leads to writing the Hamiltonian as follow:
-	
+
 	\begin{equation}
 	    \renewcommand{\arraystretch}{3.5}
 	    H_{up} =
 	    \begin{pmatrix}
-			T_1[i] & 0 & -i\,\sqrt{\frac16} P \dfrac{1}{a} & 0 & 0 & 0 & i \sqrt{\frac{1}{12}} P \frac{1}{a} & 0 \\
-			0 & T_1[i] & 0 & -i\,\sqrt{\frac16} P \dfrac{1}{a} & 0 & 0 & 0 & -i \sqrt{\frac{1}{12}} P \frac{1}{a}\\
-			-i\,\sqrt{\frac16} P \dfrac{1}{a} & 0 & U_1[i] - V_1[i] & C[i] & - \overline{S}_-^\dagger[i] & 0 & \sqrt{2} V_1[i] & -\sqrt{\frac32} \tilde{S}_-[i] \\
-			0 & -i\,\sqrt{\frac16} P \dfrac{1}{a} & C[i]^* & U_1[i] - V_1[i] & 0 & \overline{S}_+^\dagger[i] & -\sqrt{\frac32} \tilde{S}_+[i] & -\sqrt{2} V_1[i]\\
+			T_1[i] & 0 & -i\,\sqrt{\frac16} (P[i] + P[i+1]) \dfrac{1}{2a} & 0 & 0 & 0 & i \sqrt{\frac{1}{12}} (P[i] + P[i+1]) \dfrac{1}{2a} & 0 \\
+			0 & T_1[i] & 0 & -i\,\sqrt{\frac16} (P[i] + P[i+1]) \dfrac{1}{2a} & 0 & 0 & 0 & -i \sqrt{\frac{1}{12}} (P[i] + P[i+1]) \dfrac{1}{2a}\\
+			-i\,\sqrt{\frac16} (P[i] + P[i+1]) \dfrac{1}{2a} & 0 & U_1[i] - V_1[i] & C[i] & - \overline{S}_-^\dagger[i] & 0 & \sqrt{2} V_1[i] & -\sqrt{\frac32} \tilde{S}_-[i] \\
+			0 & -i\,\sqrt{\frac16} (P[i] + P[i+1]) \dfrac{1}{2a} & C[i]^* & U_1[i] - V_1[i] & 0 & \overline{S}_+^\dagger[i] & -\sqrt{\frac32} \tilde{S}_+[i] & -\sqrt{2} V_1[i]\\
 			0 & 0 & -\overline{S}_-[i] & 0 & U_1[i] + V_1[i] & 0 & \sqrt{\frac12} \overline{S}_-[i] & 0\\
 			0 & 0 & 0 & \overline{S}_+[i] & 0 & U_1[i] + V_1[i] & 0 &  \sqrt{\frac12} \overline{S}_+^\dag[i] \\
-			i \sqrt{\frac{1}{12}} P \frac{1}{a} & 0 & \sqrt{2} V_1[i] & - \sqrt{\frac32} \tilde{S}_+^\dag[i] & \sqrt{\frac12}\overline{S}_-^\dag[i] & 0 & U_1[i] & C[i] \\
-			0 & -i \sqrt{\frac{1}{12}} P \frac{1}{a} & -\sqrt{\frac32} \tilde{S}_-^\dag[i] & -\sqrt{2} V_1[i] &  0 & \sqrt{\frac12} \overline{S}_+^\dag[i] & C[i]^* & U_1[i]
+			i \sqrt{\frac{1}{12}} (P[i] + P[i+1]) \dfrac{1}{2a} & 0 & \sqrt{2} V_1[i] & - \sqrt{\frac32} \tilde{S}_+^\dag[i] & \sqrt{\frac12}\overline{S}_-^\dag[i] & 0 & U_1[i] & C[i] \\
+			0 & -i \sqrt{\frac{1}{12}} (P[i] + P[i+1]) \dfrac{1}{2a} & -\sqrt{\frac32} \tilde{S}_-^\dag[i] & -\sqrt{2} V_1[i] &  0 & \sqrt{\frac12} \overline{S}_+^\dag[i] & C[i]^* & U_1[i]
  		\end{pmatrix}
     \end{equation}
-	
+
 \section{Parameter interpolation:}
 
     For quantum wells, one generally does not use pure CdTe as a substrate but an alloy $Hg_xCd_{1-x}Te$. Naively, one may want to use a linear interpolation formula to deduce the parameters of the alloy. However several phenomenological model exist to describe in a more precise manner the parameters of the alloy. In the following we will review them.
 
     \subsection{$E_g$ and $E_V$:}
-    
+
         {\bf Ref.}:  Laurenti, J. P. et al. Temperature dependence of the fundamental absorption edge of mercury cadmium telluride. Journal of Applied Physics 67, 6454–6460 (1990).
         {\bf Ref.}:  Hansen, G. L., Schmit, J. L. \& Casselman, T. N. Energy gap versus alloy composition and temperature in Hg1-xCdxTe. Journal of Applied Physics 53, 7099–7101 (1982).
 
-    
+
         The gap energy depends both on the temperature and the concentration in non-linear way. Two phenomenological formula have been used to describe it (we do not use the author convention but the one use in the introductory paragraph):
         \begin{align}
             \text{Laurenti}& -0.303\,x + 1.606\,(1-x) + 0.132\,x\,(1-x) + \dfrac{6.3\,x - 3.25\,(1-x) - 5.92\,x\,(1-x)}{11\,x + 78.7\,(1-x) + T}10^{-4\,T^2}\\
             \text{Hansen}& -0.302 + 1.93\,(1-x) + 5.35\,10^{-4}\,T\,(1-2\,(1-x)) -0.810\,(1-x)^2 + 0.832\,(1-x)^3
         \end{align}
-        
+
         The valence band offset between HgTe and CdTe is taken to be equal to 570 meV at T=0 K, in  agreement  with  recent  experiments (C. R. Becker, V. Latussek, A. Pfeuffer-Jeschke, G. Landwehr, and L. W. Molenkamp, Phys. Rev. B 62, 10353 (2000)). One can assume it varies linearly with the fraction of HgTe (cf Novik et al. PRB {\bf 72}, 035321 (2005), C. K. Shih and W. E. Spicer, Phys. Rev. Lett. 58, 2594 (1987)), or as is done in recent computation in Wuersburg that it should scale like the gap itself:
-        
+
         \begin{equation}
             E_V(x, T) = E_V(0, 0)\,\frac{E_g(x, T) - E_g(0, T)}{E_g(1, 0) - E_g(0, 0)}
         \end{equation}
-        
+
     \subsection{$γ_1, γ_2, γ_3, κ$:}
-    
+
         The dependence of those parameters is mostly linear, however A. Pfeuffer-Jeschke discuss corrections to linearity in thesis. This discussion is simply reproduced (partially) here.
-        
+
         $γ_1, γ_2, γ_3, κ$ are the parameters of the 8-bands Kane model and can be related to the Luttinger parameters for the valence bands by:
         \begin{align}
             γ_1 &= γ_1^L - \frac13 \dfrac{E_P}{E_g}\\
@@ -432,112 +400,31 @@ the hybridization between conduction and valence bands in narrow gap semiconduct
             γ_3 &= γ_3^L - \frac16 \dfrac{E_P}{E_g}\\
             κ &= κ^L - \frac16 \dfrac{E_P}{E_g}\\
         \end{align}
-        
+
         $γ_1^L, γ_2^L, γ_3^L, κ^L$ are Luttinger parameters and can be related to four other parameters $A$, $H_1, H_2,$ and $G$. The parameter we note $A$ is noted F in A. Pfeuffer thesis.
-        
+
         \begin{align}
             γ_1^L &= - 1 - \dfrac{2\,m_0}{3\,ħ^2}\left(A + 2\,G + 2\,H_1 + 2\,H_2 \right)\\
             γ_2^L &= - \dfrac{m_0}{3\,ħ^2}\left( A + 2\,G - H_1 - H_2 \right)\\
             γ_3^L &= - \dfrac{m_0}{3\,ħ^2}\left( A - G + H_1 - H_2 \right)\\
             κ^L &= - \dfrac{1}{3} - \dfrac{m_0}{3\,ħ^2}\left( A - G - H_1 + H_2 \right)
         \end{align}
-        
+
         which can be written:
-        
+
         \begin{align}
             2\,A + 4\,G + 4\,H_1 + 4\,H_2 &= -\dfrac{3\,ħ^2}{m_0} \left( γ_1^L + 1 \right)\\
             A + 2\,G - H_1 - H_2 &= - \dfrac{3\,ħ^2}{m_0}\,γ_2^L\\
             A - G + H_1 - H_2 &= - \dfrac{3\,ħ^2}{m_0}\,γ_3^L\\
             A - G - H_1 + H_2 &= - \dfrac{3\,ħ^2}{m_0}\left( κ^L + \dfrac{1}{3} \right)
         \end{align}
-        
+
         Among those parameters only $H_1$ does not have a linear dependence.
-        
+
         \begin{equation}
             H_1(x) = \dfrac{H_1(0)H_1(1)}{H_1(0)\,x + H_1(1)\,(1-x)}
         \end{equation}
-     
+
         By combining those relations and the gap dependence on the concentration we can compute the effective parameters to use for an alloy.
-
-\section{2D model}
-
-	\subsection{Hamiltonian $6\times6$}
-
-\newcommand{\CA}[1]{\{{#1}\}_A}
-\newcommand{\CS}[1]{\{{#1}\}_S}
-
-We assume in this model that the system is 2D, and will be discretized along the $x$ and $z$ coordinates. $z$ is implicitly assumed to be the growth direction as previously (but no impact on calculations). In that case, one has to pay attention to the more complex commutation relations. We start from the hamiltonian given in A. Pfeuffer thesis. We introduce the generalized 3-operators brackets : 
-\begin{equation}
-\CA{abc}=abc-cba,\quad \CS{abc}=abc+cba
-\end{equation}
-
-
-
-We limit ourselves to the $6\times6$ hamiltonian for now, which reads :
-		\begin{equation}
-		    \renewcommand{\arraystretch}{3.5}
-			\label{eq:H0}
-			H^0=
-			\begin{pmatrix}
-				T & 0 &  -\sqrt{\frac12} P k_+  & \sqrt{\frac23} P k_z &\sqrt{\frac16} P k_- & 0\\
-				0 & T & 0 & -\sqrt{\frac16} P k_+ &  \sqrt{\frac23} P k_z & \sqrt{\frac12} P k- \\
-				-\sqrt{\frac12}  k_- P & 0 & U+V-\frac32 C_z & -\overline{S}_--\frac{\sqrt{3}}{2}C_- & R & 0 \\
-				\sqrt{\frac23} k_z P & -\sqrt{\frac16} k_- P & - \overline{S}_-^\dagger -\frac{\sqrt{3}}{2}C_+ & U-V-\frac12 C_z & -C_- & R  \\
-				\sqrt{\frac16} k_+ P & \sqrt{\frac23} k_z P & R^\dagger & -C_+ & U-V +\frac12 C_z & \overline{S}_+^\dagger \\
-				0 & \sqrt{\frac12} k_+ P & 0 & R^\dagger & \overline{S}_+ & U+V +\frac32 C_z\\
-			\end{pmatrix}
-		\end{equation}
-		
-		 where 
-		 \begin{align}
-			 T &= E_c(x,z) + \frac{ħ^2}{2\,m_0} \Big( k_x(2\,F+1) k_x +k_y(2\,F+1) k_y + k_z (2\,F+1) k_z\Big)  \\
-			 U &= E_v(x,z) - \frac{ħ^2 }{2\,m_0} \left( k_x γ_1 k_x +k_y γ_1 k_y + k_z γ_1 k_z \right) \\
-			 V &=  - \frac{ħ^2 }{2\,m_0} \left(  k_x γ_2 k_x +k_y γ_2 k_y -2 k_z γ_2 k_z \right) \\
-			R &= - \frac{ħ^2 }{2\,m_0} \sqrt{3} \left( k_+μ\,k_+ - k_-\overline{γ} k_- \right)\\
-			\overline{S}_\pm &= - \frac{ħ^2 }{2\,m_0} \sqrt{3} \CS{ k_\pm γ_3  k_z}\\
-			C_x &= i\frac{ħ^2 }{m_0} \CA{k_yκ k_z}\\
-			C_y &= i\frac{ħ^2 }{m_0} \CA{k_zκ k_x} \\
-			C_z &= i\frac{ħ^2 }{m_0} \CA{k_xκ k_y}\\
-			C_\pm&=C_x\pm iC_y = \pm\frac{ħ^2 }{m_0}\CA{k_\pm κ k_z}
-		\end{align}
-		
-
-	\subsection{Hamiltonian $8\times8$}
-
-***To be verified***
-
-We here give the full $8\times8$ hamiltonian for now, which reads :
-
-\tiny
-		\begin{equation}
-		    \renewcommand{\arraystretch}{3.5}
-			\label{eq:H0}
-			\begin{pmatrix}
-				T & 0 &  -\sqrt{\frac12} P k_+  & \sqrt{\frac23} P k_z &\sqrt{\frac16} P k_- & 0 & -\sqrt{\frac13} k_z P & -\sqrt{\frac13} k_- P\\
-				0 & T & 0 & -\sqrt{\frac16} P k_+ &  \sqrt{\frac23} P k_z & \sqrt{\frac12} P k- & -\sqrt{\frac13} k_+ P & \sqrt{\frac13} k_z P\\
-				-\sqrt{\frac12}  k_- P & 0 & U+V-\frac32 C_z & -S_--\frac{\sqrt{3}}{2}C_- & R & 0 &  \frac{1}{\sqrt{2}}S_-  +\frac{\sqrt{3}}{2\sqrt{2}}C_-& -\sqrt{2}R \\
-				\sqrt{\frac23} k_z P & -\sqrt{\frac16} k_- P & - S_+ -\frac{\sqrt{3}}{2}C_+ & U-V-\frac12 C_z & -C_- & R & \sqrt{2}V & -\sqrt{\frac{3}{2}} S_-+ \frac{1}{2\sqrt{2}} C_- \\
-				\sqrt{\frac16} k_+ P & \sqrt{\frac23} k_z P & R^\dagger & -C_+ & U-V +\frac12 C_z & S_- -\frac{\sqrt{3}}{2} C_-& -\sqrt{\frac32} S_+ -\frac{1}{2\sqrt{2}} C_+ & -\sqrt{2}V\\
-				0 & \sqrt{\frac12} k_+ P & 0 & R^\dagger & S_+ -\frac{\sqrt{3}}{2} C_+& U+V +\frac32 C_z & \sqrt{2} R^\dagger & \frac{1}{\sqrt{2}}S_+-\frac{\sqrt{3}}{2\sqrt{2}}C_+\\
-				-\sqrt{\frac13} k_z P & -\sqrt{\frac13} k_- P & \sqrt{\frac12} S_++\frac{\sqrt{3}}{2\sqrt{2}}C_+ & \sqrt{2} V & -\sqrt{\frac32} S_- -\frac{1}{2\sqrt{2}}C_-& \sqrt{2} R & U - Δ -C_z& -C_- \\
-				-\sqrt{\frac13} k_+ P & \sqrt{\frac13} k_z P & -\sqrt{2} R^\dag & -\sqrt{\frac32} S_+ \frac{1}{2\sqrt{2}}C_+& -\sqrt{2} V & \sqrt{\frac12} S_- -\frac{\sqrt{3}}{2\sqrt{2}}C_+& -C_+ & U - Δ+C_z
-			\end{pmatrix}
-		\end{equation}
-
-
-\normalsize		
-		 where 
-		 \begin{align}
-			 T &= E_c(x,z) + \frac{ħ^2}{2\,m_0} \Big( k_x(2\,F+1) k_x +k_y(2\,F+1) k_y + k_z (2\,F+1) k_z\Big)  \\
-			 U &= E_v(x,z) - \frac{ħ^2 }{2\,m_0} \left( k_x γ_1 k_x +k_y γ_1 k_y + k_z γ_1 k_z \right) \\
-			 V &=  - \frac{ħ^2 }{2\,m_0} \left(  k_x γ_2 k_x +k_y γ_2 k_y -2 k_z γ_2 k_z \right) \\
-			R &= - \frac{ħ^2 }{2\,m_0} \sqrt{3} \left( k_+μ\,k_+ - k_-\overline{γ} k_- \right)\\
-			S_\pm &= - \frac{ħ^2 }{2\,m_0} \sqrt{3} \CS{ k_\pm γ_3  k_z}\\
-			C_x &= i\frac{ħ^2 }{m_0} \CA{k_yκ k_z}\\
-			C_y &= i\frac{ħ^2 }{m_0} \CA{k_zκ k_x} \\
-			C_z &= i\frac{ħ^2 }{m_0} \CA{k_xκ k_y}\\
-			C_\pm&=C_x\pm iC_y = \pm\frac{ħ^2 }{m_0}\CA{k_\pm κ k_z}
-		\end{align}
-		
 
 \end{document}

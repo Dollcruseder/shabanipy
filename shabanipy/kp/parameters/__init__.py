@@ -10,14 +10,12 @@ import os
 import json
 
 from .substrate import SubstrateParameters
-from .quantum_well import (LayerParameters, WellParameters,
-                           WallParameters, QWSlabParameters)
-from .materials import MaterialParameters, AlloyMethod
+from .quantum_well import (LayerParameters, WellParameters)
+from .materials import MaterialParameters
 from ..types import nb_float, np_float
 
 __all__ = ['SubstrateParameters', 'LayerParameters', 'WellParameters',
-           'MaterialParameters', 'AlloyMethod', 'WallParameters',
-           'QWSlabParameters']
+           'MaterialParameters']
 
 
 

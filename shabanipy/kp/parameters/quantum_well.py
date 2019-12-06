@@ -13,7 +13,7 @@ import numpy as np
 import math
 
 from ..types import np_float
-from .hamiltonian import HamiltonianParameters1D, HamiltonianParameters2D
+from .hamiltonian import HamiltonianParameters1D
 from .materials import (MATERIAL_PARAMETERS,
                         DiscretizedMaterialParameters1D,
                         load_material_parameters,
@@ -144,7 +144,7 @@ class LayerParameters:
     materials : list[str]
         Materials names of the compounds
 
-    composition : dict[str, float]
+    composition : list[float]
         Composition of the layer expressed as fraction of the materials used
         in the layer.
 
@@ -194,7 +194,6 @@ class WellParameters:
         self.interface_lengths = (interface_lengths if smooth_interfaces else
                                   1e-9)
 
-        self.get_and_validate_materials()
 
     @property
     def physical_dimensions(self):
@@ -202,56 +201,6 @@ class WellParameters:
 
         """
         return {'z': compute_thickness(self.layers)}
-
-    def generate_hamiltonian_parameters(self, discretization_step,
-                                        alloy_method, materials_order,
-                                        bowing_parameter, temperature=0):
-        """Compute the material parameters on the dicrete lattice.
-
-        Parameters
-        ----------
-        discretization_step: float
-            Step used to discretize the continuous Hamiltonian. Expressed in
-            nm.
-
-        alloy_method: kp.parameters.AlloyMethod
-            Enum value indicating the method to use to compute the parameters
-            of an alloy.
-
-        bowing_parameter:
-
-        materials_order: list
-            The material order if the layer
-
-        temperature: float
-            Temperature at which to compute the Hamiltonian parameters.
-
-
-        Returns
-        -------
-        parameters: kp.parameters.hamiltonian.HamiltonianParameters1D
-            Discretized parameters that can be used to build a Hamiltonian
-
-        """
-
-        total_thickness, site_number, interface_indexes =\
-            compute_stack_thickness_and_interfaces(self.layers,
-                                                   discretization_step)
-        layer_fractions, layer_materials =\
-            get_layers_concentration(self, site_number, interface_indexes,
-                                     discretization_step)
-
-        for i in range(site_number):
-            if len(layer_fractions[i]) == 1:
-                parameters[i] = layer_materials[i][0]
-            elif len(layer_fractions[i]) == 2:
-                parameters[i] = make_alloy(layer_fractions[i], layer_materials[i])
-
-        return HamiltonianParameters1D(
-                site_number, discretization_step,
-                DiscretizedMaterialParameters1D(*parameters.T),
-                self.substrate.create_strain_calculator())
-
 
     def get_layers_concentration(self, site_number, interface_indexes, discretization_step):
         """Compute the layers concentration for each site point
@@ -281,10 +230,52 @@ class WellParameters:
         for i in range(site_number):
             fractions = []
             materials = []
-            for j in len(self.layers):
+            for j in range(len(self.layers)):
                 if layer_weights[j][i] > 0.001:
                     fractions.append(layer_weights[j][i])
                     materials.append(self.layers[j].alloy)
             layer_fractions.append(fractions)
             layer_materials.append(materials)
         return layer_fractions, layer_materials
+
+    def generate_hamiltonian_parameters(self, discretization_step,temperature=0):
+        """Compute the material parameters on the dicrete lattice.
+
+        Parameters
+        ----------
+        discretization_step: float
+            Step used to discretize the continuous Hamiltonian. Expressed in
+            nm.
+
+        temperature: float
+            Temperature at which to compute the Hamiltonian parameters.
+
+
+        Returns
+        -------
+        parameters: list[kp.parameters.hamiltonian._HamiltonianParameters]
+            Discretized parameters that can be used to build a Hamiltonian
+
+        """
+
+        total_thickness, site_number, interface_indexes =\
+            compute_stack_thickness_and_interfaces(self.layers,
+                                                   discretization_step)
+        layer_fractions, layer_materials =\
+            self.get_layers_concentration(site_number, interface_indexes,
+                                          discretization_step)
+
+        parameters = np.empty((site_number, len(MATERIAL_PARAMETERS)),
+                              dtype=np_float)
+
+        for i in range(site_number):
+            if len(layer_fractions[i]) == 2:
+                parameters[i] = make_alloy(layer_fractions[i],
+                                           layer_materials[i]).as_tuple()
+            else:
+                parameters[i] = layer_materials[i][0].as_tuple()
+
+        return HamiltonianParameters1D(
+                site_number, np_float(discretization_step),
+                DiscretizedMaterialParameters1D(*parameters.T),
+                self.substrate.create_strain_calculator())

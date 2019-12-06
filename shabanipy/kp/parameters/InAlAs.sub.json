@@ -1,0 +1,8 @@
+{
+    "composition":
+    {
+        "AlAs": 0.19,
+        "InAs": 0.81
+    },
+    "lattice_constant": 0.5982832
+}

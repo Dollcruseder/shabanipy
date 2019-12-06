@@ -51,13 +51,15 @@ class _HamiltonianParameters:
         """Compute the kinetic prefactor.
 
         """
-        return np_float(0.5)/cs.electron_mass
+        reduced_mass = np_float(13.105)
+        return np_float(0.5)/reduced_mass*np.ones_like(material.ep, np_float)
 
     def compute_p(self, material):
         """Compute P.
 
         """
-        return np.sqrt(np_float(0.5)*material.ep/cs.electron_mass)
+        reduced_mass = np_float(13.105)
+        return np.sqrt(np_float(0.5)*material.ep/reduced_mass)
 
     def compute_gamma_bar(self, material):
         """Compute gamma_bar.
@@ -107,4 +109,4 @@ HamiltonianParameters1D = _1d_jitclass(_HamiltonianParameters)
 #                          ('step_size', nb_float[:])] +
 #                         [(p, nb_float[:, :]) for p in HAMILTONIAN_PARAMETERS])
 
-HamiltonianParameters2D = _HamiltonianParameters
+#HamiltonianParameters2D = _HamiltonianParameters

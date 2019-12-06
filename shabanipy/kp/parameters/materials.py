@@ -9,6 +9,7 @@
 import enum
 import os
 import json
+from collections import namedtuple
 
 import numpy as np
 from numba import njit, jitclass
@@ -118,15 +119,8 @@ class MaterialParameters:
                 self.elasticity_11, self.elasticity_12)
 
 
-#MaterialParameters = jitclass([(p, nb_float) for p in MATERIAL_PARAMETERS])(MaterialParameters)
-
-mat_class = (MaterialParameters.class_type.class_def
-             if hasattr(MaterialParameters, 'class_type') else
-             MaterialParameters)
-DiscretizedMaterialParameters1D =\
-    jitclass([(p, nb_float[:]) for p in MATERIAL_PARAMETERS])(mat_class)
-DiscretizedMaterialParameters2D =\
-    jitclass([(p, nb_float[:, :]) for p in MATERIAL_PARAMETERS])(mat_class)
+DiscretizedMaterialParameters1D = namedtuple("DiscretizedMaterialParameters1D",
+                                             MATERIAL_PARAMETERS)
 
 EG_INDEX = 2
 EV_INDEX = 3
@@ -233,7 +227,7 @@ def make_alloy(fractions, materials, temperature=0, pfeuffer=False):
     m1, m2 = materials
     all_compounds = list(set(m1.compounds) | set(m2.compounds))
 
-    A = np.empty((2, len(all_compounds)))
+    A = np.empty((len(all_compounds), 2))
     for i in range(len(all_compounds)):
         A[i, 0] = m1.compounds[all_compounds[i]] if all_compounds[i] in m1.compounds.keys() else 0
         A[i, 1] = m2.compounds[all_compounds[i]] if all_compounds[i] in m2.compounds.keys() else 0

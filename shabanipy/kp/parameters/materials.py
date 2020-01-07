@@ -19,7 +19,7 @@ from ..types import nb_float, np_float
 # #: Names of the material parameters
 MATERIAL_PARAMETERS = ('electron_mass', 'ep',
                        'eg', 'ev', 'alpha', 'beta', 'spin_orbit_splitting',
-                       'f', 'gamma_1', 'gamma_2', 'gamma_3', 'kappa',
+                       'f', 'gamma_1_L', 'gamma_2_L', 'gamma_3_L','gamma_1', 'gamma_2', 'gamma_3', 'kappa',
                        'def_a', 'def_b', 'def_c', 'def_d',
                        'lattice_constant', 'dielectric_permitivity',
                        'elasticity_11', 'elasticity_12')
@@ -53,7 +53,7 @@ class MaterialParameters:
         Spin orbit splitting energy in eV. This term is responsible for the
         splitting of the gamma 7 sub band.
 
-    f, gamma_1, gamma_2, gamma_3, kappa : float
+    f, gamma_1_L, gamma_2_L, gamma_3_L, gamma_1, gamma_2, gamma_3, kappa : float
         Coupling to the far off bands.
 
     def_a : float
@@ -80,7 +80,7 @@ class MaterialParameters:
     """
     def __init__(self, compounds,
                  electron_mass, ep, eg, ev, alpha, beta, spin_orbit_splitting,
-                 f, gamma_1, gamma_2, gamma_3, kappa,
+                 f, gamma_1_L, gamma_2_L, gamma_3_L ,gamma_1, gamma_2, gamma_3, kappa,
                  def_a, def_b, def_c, def_d,
                  lattice_constant, dielectric_permitivity,
                  elasticity_11, elasticity_12):
@@ -93,6 +93,9 @@ class MaterialParameters:
         self.beta = beta
         self.spin_orbit_splitting = spin_orbit_splitting
         self.f = f
+        self.gamma_1_L = gamma_1_L
+        self.gamma_2_L = gamma_2_L
+        self.gamma_3_L = gamma_3_L
         self.gamma_1 = gamma_1
         self.gamma_2 = gamma_2
         self.gamma_3 = gamma_3
@@ -113,10 +116,12 @@ class MaterialParameters:
         return (self.electron_mass, self.ep,
                 self.eg, self.ev, self.alpha, self.beta,
                 self.spin_orbit_splitting,
-                self.f, self.gamma_1, self.gamma_2, self.gamma_3, self.kappa,
+                self.f, self.gamma_1_L, self.gamma_2_L, self.gamma_3_L,
+                self.gamma_1, self.gamma_2, self.gamma_3, self.kappa,
                 self.def_a, self.def_b, self.def_c, self.def_d,
                 self.lattice_constant, self.dielectric_permitivity,
                 self.elasticity_11, self.elasticity_12)
+
 
 
 DiscretizedMaterialParameters1D = namedtuple("DiscretizedMaterialParameters1D",
@@ -140,8 +145,20 @@ def load_material_parameters(name):
                                name.lower() + '.mat.json')) as f:
             parameters = json.load(f)
 
+        if parameters["gamma_1"] == "Unknow":
+            parameters["gamma_1"] = parameters["gamma_1_L"] - np_float(1/3)*parameters["ep"]/parameters["eg"]
+            # Here we calculate the value of gamma_1 if it is unknow
+
+        if parameters["gamma_2"] == "Unknow":
+            parameters["gamma_2"] = parameters["gamma_2_L"] - np_float(1/6)*parameters["ep"]/parameters["eg"]
+            # Here we calculate the value of gamma_2 if it is unknow
+
+        if parameters["gamma_3"] == "Unknow":
+            parameters["gamma_3"] = parameters["gamma_3_L"] - np_float(1/6)*parameters["ep"]/parameters["eg"]
+            # Here we calculate the value of gamma_3 if it is unknow
+
         if parameters["kappa"] == "Unknow":
-            parameters["kappa"] = parameters["gamma_3"] + np_float(2/3)*parameters["gamma_2"] - np_float(1/3)*parameters["gamma_1"] - np_float(2/3)
+            parameters["kappa"] = parameters["gamma_3_L"] + np_float(2/3)*parameters["gamma_2_L"] - np_float(1/3)*parameters["gamma_1_L"] - np_float(2/3) - np_float(1/6)*parameters["ep"]/parameters["eg"]
             # Here we calculate the value of kappa if it is unknow
 
         _CACHE_MATERIAL[name] = MaterialParameters({name: 1.0}, **parameters)
@@ -160,6 +177,8 @@ def get_alloy_name(name1, name2):
         alloy_name = "AlGaAs"
     if ((name1 == "InAs") & (name2 == "AlAs"))|((name1 == "AlAs") & (name2 == "InAs")):
         alloy_name = "AlInAs"
+    if ((name1 == "hgte") & (name2 == "cdte"))|((name1 == "cdte") & (name2 == "hgte")):
+        alloy_name = "hgcdte"
     return alloy_name
 
 
@@ -188,7 +207,7 @@ def load_bowing_parameters(names):
     return _CACHE_BOWING[alloy_name]
 
 
-def make_alloy(fractions, materials, temperature=0, pfeuffer=False):
+def make_alloy(fractions, materials, temperature=0, preuffer=False, HGTE_LATTICE=False):
     """Compute the parameters of an alloy using the specified method.
 
     Parameters
@@ -260,7 +279,16 @@ def make_alloy(fractions, materials, temperature=0, pfeuffer=False):
     else:
         raise ValueError()
 
-    if pfeuffer:
+
+    if HGTE_LATTICE:
+        # fraction[1] for cdte
+        alloy['lattice_constant'] = 0.1*(6.4619 +
+                                             0.0095*fractions[1] +
+                                             0.0168*(fractions[1]**2) -
+                                             0.0057*(fractions[1]**3)
+                                             )
+
+    if preuffer:
         kin = np_float(0.5)/materials[0].electron_mass  # hb^2/(2*m_0)
 
         # Compute the parameters A, G, H1 and H2 of the docs

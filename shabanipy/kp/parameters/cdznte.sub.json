@@ -1,0 +1,8 @@
+{
+    "composition":
+    {
+        "CdTe": 0.96,
+        "ZnTe": 0.04
+    },
+    "lattice_constant": 0.646688
+}

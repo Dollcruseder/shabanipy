@@ -220,18 +220,18 @@ def build_hamiltonian(kx, ky, parameters, band_number):
 
         # First line: gamma 6 +1/2
         h[ind, ind+bn] = t1
-        h[ind, ind+bn+2] = -1j*p*i_sqrt6*i_step
+        h[ind, ind+bn+2] = -1j*0.5*(p + p_arr[i+1])*i_sqrt6*i_step
         local_hermit(h, ind, ind+bn)
         local_hermit(h, ind, ind+bn+2)
 
         # Second line: gamma 6 -1/2
         h[ind+1, ind+bn+1] = t1
-        h[ind+1, ind+bn+3] = -1j*p*i_sqrt6*i_step
+        h[ind+1, ind+bn+3] = -1j*0.5*(p + p_arr[i+1])*i_sqrt6*i_step
         local_hermit(h, ind+1, ind+bn+1)
         local_hermit(h, ind+1, ind+bn+3)
 
         # Third line: gamma 8 +1/2
-        h[ind+2, ind+bn] = - 1j*i_sqrt6*i_step*p
+        h[ind+2, ind+bn] = -1j*0.5*(p + p_arr[i+1])*i_sqrt6*i_step
         h[ind+2, ind+bn+2] = u1 - v1
         h[ind+2, ind+bn+3] = c
         # Symmetrize
@@ -240,7 +240,7 @@ def build_hamiltonian(kx, ky, parameters, band_number):
         local_hermit(h, ind+2, ind+bn+3)
 
         # Fourth line: gamma 8 -1/2
-        h[ind+3, ind+bn+1] = - 1j*i_sqrt6*i_step*p
+        h[ind+3, ind+bn+1] = -1j*0.5*(p + p_arr[i+1])*i_sqrt6*i_step
         h[ind+3, ind+bn+2] = c.conjugate()
         h[ind+3, ind+bn+3] = u1 - v1
         # Symmetrize
@@ -305,8 +305,8 @@ def build_hamiltonian(kx, ky, parameters, band_number):
 
                 # Additional terms needed in the 8 bands model on the
                 # previously filled lines
-                h[ind, ind+bn+6] = 1j*i_sqrt12*p*i_step
-                h[ind+1, ind+bn+7] = - 1j*i_sqrt12*p*i_step
+                h[ind, ind+bn+6] = 1j*i_sqrt12*0.5*(p + p_arr[i+1])*i_step
+                h[ind+1, ind+bn+7] = -1j*i_sqrt12*0.5*(p + p_arr[i+1])*i_step
                 h[ind+2, ind+bn+6] = sqrt2 * v1
                 h[ind+2, ind+bn+7] = - sqrt3_2 * st_m
                 h[ind+3, ind+bn+6] = - sqrt3_2 * st_p
@@ -323,7 +323,7 @@ def build_hamiltonian(kx, ky, parameters, band_number):
                 local_hermit(h, ind+5, ind+bn+7)
 
                 # Sixth line: gamma 7 +1/2
-                h[ind+6, ind+bn] = 1j*i_sqrt12*p*i_step
+                h[ind+6, ind+bn] = 1j*i_sqrt12*0.5*(p + p_arr[i+1])*i_step
                 h[ind+6, ind+bn+2] = sqrt2*v1
                 h[ind+6, ind+bn+3] = - sqrt3_2*std_p
                 h[ind+6, ind+bn+4] = i_sqrt2*sbd_m
@@ -331,7 +331,7 @@ def build_hamiltonian(kx, ky, parameters, band_number):
                 h[ind+6, ind+bn+7] = c
 
                 # Seventh line: gamma 7 -1/2
-                h[ind+7, ind+bn+1] = - 1j*i_sqrt12*p*i_step
+                h[ind+7, ind+bn+1] = -1j*i_sqrt12*0.5*(p + p_arr[i+1])*i_step
                 h[ind+7, ind+bn+2] = - sqrt3_2*std_m
                 h[ind+7, ind+bn+3] = - sqrt2*v1
                 h[ind+7, ind+bn+5] = i_sqrt2*sbd_p

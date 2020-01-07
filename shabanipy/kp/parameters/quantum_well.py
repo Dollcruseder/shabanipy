@@ -230,10 +230,14 @@ class WellParameters:
         for i in range(site_number):
             fractions = []
             materials = []
-            for j in range(len(self.layers)):
-                if layer_weights[j][i] > 0.001:
-                    fractions.append(layer_weights[j][i])
-                    materials.append(self.layers[j].alloy)
+            if len(self.layers) == 1:
+                fractions.append(1.0)
+                materials.append(self.layers[0].alloy)
+            else:
+                for j in range(len(self.layers)):
+                    if layer_weights[j][i] > 0.001:
+                        fractions.append(layer_weights[j][i])
+                        materials.append(self.layers[j].alloy)
             layer_fractions.append(fractions)
             layer_materials.append(materials)
         return layer_fractions, layer_materials
@@ -267,7 +271,6 @@ class WellParameters:
 
         parameters = np.empty((site_number, len(MATERIAL_PARAMETERS)),
                               dtype=np_float)
-
         for i in range(site_number):
             if len(layer_fractions[i]) == 2:
                 parameters[i] = make_alloy(layer_fractions[i],

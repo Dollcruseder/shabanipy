@@ -158,6 +158,10 @@ def build_hamiltonian(kx, ky, parameters, band_number):
             sb_0_m = - 2*b*sqrt3*(kx - 1j*ky)*1j*i_step*gamma3[i]
             st_0_p = - 2*b*sqrt3*(kx + 1j*ky)*1j*i_step*gamma3[i]
             st_0_m = - 2*b*sqrt3*(kx - 1j*ky)*1j*i_step*gamma3[i]
+
+            sb_0_p_d = - 2*b*sqrt3*(kx - 1j*ky)*1j*i_step*gamma3[i]
+            sb_0_m_d = - 2*b*sqrt3*(kx + 1j*ky)*1j*i_step*gamma3[i]
+
             # Additional terms needed in the 6 bands model on the previously
             # filled lines
             h[ind, ind+4] = -i_sqrt2*p*(kx + 1j*ky)
@@ -165,10 +169,10 @@ def build_hamiltonian(kx, ky, parameters, band_number):
             local_hermit(h, ind, ind+4)
             local_hermit(h, ind+1, ind+5)
 
-            h[ind+2, ind+4] = -0.5*bia*(kx - 1j*ky) - sb_0_m.conjugate()
+            h[ind+2, ind+4] = -0.5*bia*(kx - 1j*ky) - sb_0_m_d
             h[ind+2, ind+5] = R
             h[ind+3, ind+4] = R.conjugate()
-            h[ind+3, ind+5] = -0.5*bia*(kx + 1j*ky) + sb_0_p.conjugate()
+            h[ind+3, ind+5] = -0.5*bia*(kx + 1j*ky) + sb_0_p_d
             local_hermit(h, ind+2, ind+4)
             local_hermit(h, ind+2, ind+5)
             local_hermit(h, ind+3, ind+4)
@@ -269,12 +273,15 @@ def build_hamiltonian(kx, ky, parameters, band_number):
             # Additional common terms
             # HINT Notice that terms in \bar{S} and \bar{S}^\dag are not
             # complex conjugated
-            sb_1_p = -1j*i_step*b*sqrt3*(kx + 1j*ky)*(g3+gamma3[i+1]-kappa[i+1]+kap)
-            sb_1_m = -1j*i_step*b*sqrt3*(kx - 1j*ky)*(g3+gamma3[i+1]-kappa[i+1]+kap)
+            sb_1_p = 1j*i_step*b*sqrt3*(kx + 1j*ky)*(g3+gamma3[i+1]-kappa[i+1]+kap)
+            sb_1_m = 1j*i_step*b*sqrt3*(kx - 1j*ky)*(g3+gamma3[i+1]-kappa[i+1]+kap)
+
+            sb_1_p_d = 1j*i_step*b*sqrt3*(kx - 1j*ky)*(g3+gamma3[i+1]+kappa[i+1]-kap)
+            sb_1_m_d = 1j*i_step*b*sqrt3*(kx + 1j*ky)*(g3+gamma3[i+1]+kappa[i+1]-kap)
             # Additional common terms
             # HINT Notice that terms in \tilde{S} and \tilde{S}^\dag are
-            st_1_p = -1j*i_step*b*sqrt3*(kx + 1j*ky)*(g3+gamma3[i+1]+i_3*kappa[i+1]-i_3*kap)
-            st_1_m = -1j*i_step*b*sqrt3*(kx - 1j*ky)*(g3+gamma3[i+1]+i_3*kappa[i+1]-i_3*kap)
+            st_1_p = 1j*i_step*b*sqrt3*(kx + 1j*ky)*(g3+gamma3[i+1]+i_3*kappa[i+1]-i_3*kap)
+            st_1_m = 1j*i_step*b*sqrt3*(kx - 1j*ky)*(g3+gamma3[i+1]+i_3*kappa[i+1]-i_3*kap)
             # Additional terms needed in the 6 bands model on the previously
             # filled lines
             h[ind+2, ind+bn+5] = 1j*bia*i_step*0.5
@@ -283,21 +290,21 @@ def build_hamiltonian(kx, ky, parameters, band_number):
             local_hermit(h, ind+3, ind+bn+4)
 
             # Fifth line: gamma 8 +3/2
-            h[ind+4, ind+bn+2] = - sb_1_m  # Match docs and fortran
+            h[ind+2, ind+bn+4] = - sb_1_m_d  # Match docs and fortran
             h[ind+4, ind+bn+3] = -1j*bia*i_step*0.5
             h[ind+4, ind+bn+4] = u1 + v1
             # Symmetrize
-            local_hermit(h, ind+4, ind+bn+2)
+            local_hermit(h, ind+2, ind+bn+4)
             local_hermit(h, ind+4, ind+bn+3)
             local_hermit(h, ind+4, ind+bn+4)
 
             # Sixth line: gamma 8 -3/2
             h[ind+5, ind+bn+2] = 1j*bia*i_step
-            h[ind+5, ind+bn+3] = sb_1_p  # Match docs and fortran
+            h[ind+3, ind+bn+5] = sb_1_p_d  # Match docs and fortran
             h[ind+5, ind+bn+5] = u1 + v1
             # Symmetrize
             local_hermit(h, ind+5, ind+bn+2)
-            local_hermit(h, ind+5, ind+bn+3)
+            local_hermit(h, ind+3, ind+bn+5)
             local_hermit(h, ind+5, ind+bn+5)
 
             if bn == 8:

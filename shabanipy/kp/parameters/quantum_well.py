@@ -116,9 +116,15 @@ def build_layer_weights(site_number, interface_indexes,
 
     # The profiles are close to one before the interface and close to zero
     # after. For sharp interfaces use a small value of the interface length.
-    profiles = [(1 - np.tanh((sites - index)/length))*0.5
+
+    # profiles = [(1 - np.tanh((sites - index)/length))*0.5
+    #             for index, length in zip(interface_indexes,
+    #                                      interface_lengths)]
+
+    profiles = [(1 - np.tanh((sites - index - 0.5)/length))*0.5
                 for index, length in zip(interface_indexes,
                                          interface_lengths)]
+    #the heterojunction must be coincident with the point at n−1 for one side difference
 
     layer_weights = []
     for i in range(len(profiles) + 1):

@@ -241,6 +241,7 @@ def build_hamiltonian(kx, ky, parameters, band_number):
         # Common terms
         t1 = -b*i_step**2*(1 + 2*f_arr[i])
         c = 1j*b*i_step*(kappa[i+1] - kap)*(kx - 1j*ky)
+        # c = 0
         u1 = b*i_step**2*gamma1[i]
         v1 = - b*i_step**2*2*gamma2[i]
 

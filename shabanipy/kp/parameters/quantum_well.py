@@ -75,7 +75,7 @@ def compute_stack_thickness_and_interfaces(layer_like_list,
 
 
 def build_layer_weights(site_number, interface_indexes,
-                        discretization_step, interface_lengths):
+                        discretization_step, interface_lengths, one_side_difference=False):
     """Build the weights of each layer (array varying between 0 and 1).
 
     Parameters
@@ -90,6 +90,8 @@ def build_layer_weights(site_number, interface_indexes,
         Smoothness of the interfaces  expressed as the length normalizing the
         argument of tanh (a single value is interpreted as an equal value for
         all interfaces).
+    one_side_difference
+        whether use one_side_difference
 
     Returns
     -------
@@ -116,15 +118,19 @@ def build_layer_weights(site_number, interface_indexes,
 
     # The profiles are close to one before the interface and close to zero
     # after. For sharp interfaces use a small value of the interface length.
-
-    # profiles = [(1 - np.tanh((sites - index)/length))*0.5
-    #             for index, length in zip(interface_indexes,
-    #                                      interface_lengths)]
-
-    profiles = [(1 - np.tanh((sites - index - 0.5)/length))*0.5
-                for index, length in zip(interface_indexes,
-                                         interface_lengths)]
+    #
+    if one_side_difference:
+        profiles = [(1 - np.tanh((sites - index - 0.5)/length))*0.5
+                    for index, length in zip(interface_indexes,
+                                             interface_lengths)]
     #the heterojunction must be coincident with the point at n−1 for one side difference
+
+    else:
+        profiles = [(1 - np.tanh((sites - index)/length))*0.5
+                    for index, length in zip(interface_indexes,
+                                             interface_lengths)]
+
+
 
     layer_weights = []
     for i in range(len(profiles) + 1):
@@ -208,7 +214,7 @@ class WellParameters:
         """
         return {'z': compute_thickness(self.layers)}
 
-    def get_layers_concentration(self, site_number, interface_indexes, discretization_step):
+    def get_layers_concentration(self, site_number, interface_indexes, discretization_step, one_side_difference=False):
         """Compute the layers concentration for each site point
 
         Parameters
@@ -219,6 +225,8 @@ class WellParameters:
             Number of sites along the discretization axis considered.
         interface_indexes : tuple[int]
             Indexes of the of the interfaces between the layers.
+        one_side_difference
+            whether use one_side_difference
 
         Returns
         -------
@@ -230,7 +238,8 @@ class WellParameters:
         layer_weights = build_layer_weights(site_number,
                                             interface_indexes,
                                             discretization_step,
-                                            self.interface_lengths)
+                                            self.interface_lengths,
+                                            one_side_difference)
         layer_materials=[]
         layer_fractions=[]
         for i in range(site_number):
@@ -248,7 +257,7 @@ class WellParameters:
             layer_materials.append(materials)
         return layer_fractions, layer_materials
 
-    def generate_hamiltonian_parameters(self, discretization_step,temperature=0):
+    def generate_hamiltonian_parameters(self, discretization_step,one_side_difference=False,temperature=0):
         """Compute the material parameters on the dicrete lattice.
 
         Parameters
@@ -256,6 +265,9 @@ class WellParameters:
         discretization_step: float
             Step used to discretize the continuous Hamiltonian. Expressed in
             nm.
+
+        one_side_difference
+            whether use one_side_difference
 
         temperature: float
             Temperature at which to compute the Hamiltonian parameters.
@@ -273,7 +285,7 @@ class WellParameters:
                                                    discretization_step)
         layer_fractions, layer_materials =\
             self.get_layers_concentration(site_number, interface_indexes,
-                                          discretization_step)
+                                          discretization_step, one_side_difference)
 
         parameters = np.empty((site_number, len(MATERIAL_PARAMETERS)),
                               dtype=np_float)

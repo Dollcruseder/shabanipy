@@ -11,6 +11,8 @@ INTERFACE_THICKNESS = 0.005
 #: Discretization step (nm)
 DISCRETIZATION_STEP = 0.1
 
+ONE_SIDE_DIFFERENCE = True
+
 import numpy as np
 from shabanipy.kp.parameters import LayerParameters, WellParameters, MaterialParameters, SubstrateParameters, load_substrate_parameters
 from shabanipy.kp.parameters.materials import MATERIAL_PARAMETERS, make_alloy, load_material_parameters
@@ -92,7 +94,7 @@ step = DISCRETIZATION_STEP
 
 well = WellParameters(layers, substrate, True, interface)
 
-h_par = well.generate_hamiltonian_parameters(step)
+h_par = well.generate_hamiltonian_parameters(step, ONE_SIDE_DIFFERENCE)
 
 # print(h_par.ec - h_par.ev)
 # site_number = 2

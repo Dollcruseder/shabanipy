@@ -1,5 +1,5 @@
 #: Orthogonal axis wave-vector
-FIXED_K_X = 0.05
+FIXED_K_X = 0
 FIXED_K_Y = 0
 
 #: Number of bands to consider in the calculation
@@ -95,6 +95,7 @@ step = DISCRETIZATION_STEP
 well = WellParameters(layers, substrate, True, interface)
 
 h_par = well.generate_hamiltonian_parameters(step, ONE_SIDE_DIFFERENCE)
+h_par_old = well.generate_hamiltonian_parameters(step)
 
 # print(h_par.ec - h_par.ev)
 # site_number = 2
@@ -106,7 +107,7 @@ h_par = well.generate_hamiltonian_parameters(step, ONE_SIDE_DIFFERENCE)
 #                                 DiscretizedMaterialParameters1D(*parameters.T),)
 
 energies, v = compute_spectrum(kx, ky, h_par, BAND_NUMBER)
-energies_old, v_old = compute_spectrum(kx, ky, h_par, BAND_NUMBER, True)
+energies_old, v_old = compute_spectrum(kx, ky, h_par_old, BAND_NUMBER)
 
 
 
@@ -157,5 +158,6 @@ ax2.plot(x, np.sqrt(np.abs(v_old.T[m_index_old_second][::BAND_NUMBER])**2 +
                     np.abs(v_old.T[m_index_old_second][3::BAND_NUMBER])**2), '*', label = "old, second")
 plt.legend()
 ax2.twinx().plot(x, h_par.ec - h_par.ev)
+ax2.twinx().plot(x, h_par_old.ec - h_par_old.ev)
 
 plt.show()

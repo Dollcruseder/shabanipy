@@ -135,7 +135,7 @@ def build_hamiltonian(kx, ky, parameters, band_number):
         # Symmetrize
         local_hermit(h, ind+1, ind+2)
 
-        h[ind+1, ind+3] = 1j * i_step * sqrt2_3 * p
+        h[ind+1, ind+3] = -1j * i_step * sqrt2_3 * p
         local_hermit(h, ind+1, ind+3)
 
         # Energy of the spin 1/2 holes
@@ -143,9 +143,7 @@ def build_hamiltonian(kx, ky, parameters, band_number):
 
         # Third line: gamma 8 +1/2
         h[ind+2, ind+2] = h12_diag
-        h[ind+2, ind+3] = sqrt3*0.5*bia*(kx + 1j*ky)  # BIA term
         # Symmetrize
-        local_hermit(h, ind+2, ind+3)  # BIA term
 
         # Fourth line: gamma 8 -1/2
         h[ind+3, ind+3] = h12_diag
@@ -156,8 +154,6 @@ def build_hamiltonian(kx, ky, parameters, band_number):
             R = - b*sqrt3*((mu - gb)*(kx**2 - ky**2) + 2j*kx*ky*(mu + gb))
             sb_0_p = - 2*b*sqrt3*(kx + 1j*ky)*1j*i_step*gamma3[i]
             sb_0_m = - 2*b*sqrt3*(kx - 1j*ky)*1j*i_step*gamma3[i]
-            st_0_p = - 2*b*sqrt3*(kx + 1j*ky)*1j*i_step*gamma3[i]
-            st_0_m = - 2*b*sqrt3*(kx - 1j*ky)*1j*i_step*gamma3[i]
 
             sb_0_p_d = - 2*b*sqrt3*(kx - 1j*ky)*1j*i_step*gamma3[i]
             sb_0_m_d = - 2*b*sqrt3*(kx + 1j*ky)*1j*i_step*gamma3[i]
@@ -172,11 +168,11 @@ def build_hamiltonian(kx, ky, parameters, band_number):
             h[ind+2, ind+4] = -0.5*bia*(kx - 1j*ky) - sb_0_m_d
             h[ind+2, ind+5] = R
             h[ind+3, ind+4] = R.conjugate()
-            h[ind+3, ind+5] = -0.5*bia*(kx + 1j*ky) + sb_0_p_d
+            h[ind+5, ind+3] =  sb_0_p
             local_hermit(h, ind+2, ind+4)
             local_hermit(h, ind+2, ind+5)
             local_hermit(h, ind+3, ind+4)
-            local_hermit(h, ind+3, ind+5)
+            local_hermit(h, ind+5, ind+3)
 
             # Energy for hole 3/2
             h32_diag = u0 + v0
@@ -197,27 +193,23 @@ def build_hamiltonian(kx, ky, parameters, band_number):
                 h[ind, ind+6] = -1j*i_step*i_sqrt3*p
                 h[ind, ind+7] = -i_sqrt3*p*(kx - 1j*ky)
                 h[ind+1, ind+6] = -i_sqrt3*p*(kx + 1j*ky)
-                h[ind+1, ind+7] = 1j*i_step*i_sqrt3*p
+                h[ind+1, ind+7] = -1j*i_step*i_sqrt3*p
                 h[ind+2, ind+6] = sqrt2 * v0
-                h[ind+2, ind+7] = -sqrt3_2*st_0_m
-                h[ind+3, ind+6] = -sqrt3_2*st_0_p
                 h[ind+3, ind+7] = - sqrt2 * v0
                 h[ind+4, ind+6] = i_sqrt2*sb_0_m
                 h[ind+4, ind+7] = - sqrt2 * R
                 h[ind+5, ind+6] = sqrt2 * R.conjugate()
-                h[ind+5, ind+7] = sqrt2*sb_0_p
+                h[ind+7, ind+5] = sqrt2*sb_0_p_d
                 local_hermit(h, ind, ind+6)
                 local_hermit(h, ind, ind+7)
                 local_hermit(h, ind+1, ind+6)
                 local_hermit(h, ind+1, ind+7)
                 local_hermit(h, ind+2, ind+6)
-                local_hermit(h, ind+2, ind+7)
-                local_hermit(h, ind+3, ind+6)
                 local_hermit(h, ind+3, ind+7)
                 local_hermit(h, ind+4, ind+6)
                 local_hermit(h, ind+4, ind+7)
                 local_hermit(h, ind+5, ind+6)
-                local_hermit(h, ind+5, ind+7)
+                local_hermit(h, ind+7, ind+5)
 
                 # Sixth line: gamma 7 +1/2
                 h[ind+6, ind+6] = u0 - delta
@@ -241,6 +233,7 @@ def build_hamiltonian(kx, ky, parameters, band_number):
         # Common terms
         t1 = -b*i_step**2*(1 + 2*f_arr[i])
         c = 1j*b*i_step*(kappa[i+1] - kap)*(kx - 1j*ky)
+        c_d = -1j*b*i_step*(kappa[i+1] - kap)*(kx + 1j*ky)
         # c = 0
         u1 = b*i_step**2*gamma1[i]
         v1 = - b*i_step**2*2*gamma2[i]
@@ -253,16 +246,18 @@ def build_hamiltonian(kx, ky, parameters, band_number):
 
         # Second line: gamma 6 -1/2
         h[ind+1, ind+bn+1] = t1
-        h[ind+1, ind+bn+3] = -1j*i_step*(p + p_arr[i+1])*i_sqrt6
+        h[ind+3, ind+bn+1] = -1j*i_step*(p + p_arr[i+1])*i_sqrt6
         local_hermit(h, ind+1, ind+bn+1)
-        local_hermit(h, ind+1, ind+bn+3)
+        local_hermit(h, ind+3, ind+bn+1)
 
         # Third line: gamma 8 +1/2
         h[ind+2, ind+bn+2] = u1 - v1
         h[ind+2, ind+bn+3] = c
+        h[ind+3, ind+bn+2] = c_d
         # Symmetrize
         local_hermit(h, ind+2, ind+bn+2)
         local_hermit(h, ind+2, ind+bn+3)
+        local_hermit(h, ind+3, ind+bn+2)
 
         # Fourth line: gamma 8 -1/2
         h[ind+3, ind+bn+3] = u1 - v1
@@ -281,8 +276,11 @@ def build_hamiltonian(kx, ky, parameters, band_number):
             sb_1_m_d = 1j*i_step*b*sqrt3*(kx + 1j*ky)*(g3+gamma3[i+1]+kappa[i+1]-kap)
             # Additional common terms
             # HINT Notice that terms in \tilde{S} and \tilde{S}^\dag are
-            st_1_p = 1j*i_step*b*sqrt3*(kx + 1j*ky)*(g3+gamma3[i+1]+i_3*kappa[i+1]-i_3*kap)
-            st_1_m = 1j*i_step*b*sqrt3*(kx - 1j*ky)*(g3+gamma3[i+1]+i_3*kappa[i+1]-i_3*kap)
+            st_1_p = 0.5 * 1j*i_step*b*sqrt3*(kx + 1j*ky)*(g3+gamma3[i+1]+i_3*kappa[i+1]-i_3*kap)
+            st_1_m = 0.5 * 1j*i_step*b*sqrt3*(kx - 1j*ky)*(g3+gamma3[i+1]+i_3*kappa[i+1]-i_3*kap)
+
+            st_1_p_d = 0.5 * 1j*i_step*b*sqrt3*(kx - 1j*ky)*(g3+gamma3[i+1]-i_3*kappa[i+1]+i_3*kap)
+            st_1_m_d = 0.5 * 1j*i_step*b*sqrt3*(kx + 1j*ky)*(g3+gamma3[i+1]-i_3*kappa[i+1]+i_3*kap)
             # Additional terms needed in the 6 bands model on the previously
             # filled lines
             h[ind+2, ind+bn+5] = 1j*bia*i_step*0.5
@@ -301,11 +299,11 @@ def build_hamiltonian(kx, ky, parameters, band_number):
 
             # Sixth line: gamma 8 -3/2
             h[ind+5, ind+bn+2] = 1j*bia*i_step
-            h[ind+3, ind+bn+5] = sb_1_p_d  # Match docs and fortran
+            h[ind+5, ind+bn+3] = sb_1_p  # Match docs and fortran
             h[ind+5, ind+bn+5] = u1 + v1
             # Symmetrize
             local_hermit(h, ind+5, ind+bn+2)
-            local_hermit(h, ind+3, ind+bn+5)
+            local_hermit(h, ind+5, ind+bn+3)
             local_hermit(h, ind+5, ind+bn+5)
 
             if bn == 8:
@@ -317,36 +315,44 @@ def build_hamiltonian(kx, ky, parameters, band_number):
                 # Additional terms needed in the 8 bands model on the
                 # previously filled lines
                 h[ind, ind+bn+6] = 1j*i_step*i_sqrt12*(p + p_arr[i+1])
-                h[ind+1, ind+bn+7] = -1j*i_step*i_sqrt12*(p + p_arr[i+1])
                 h[ind+2, ind+bn+6] = sqrt2 * v1
                 h[ind+2, ind+bn+7] = - sqrt3_2 * st_1_m
                 h[ind+3, ind+bn+6] = - sqrt3_2 * st_1_p
                 h[ind+3, ind+bn+7] = - sqrt2 * v1
                 h[ind+4, ind+bn+6] = i_sqrt2 * sb_1_m
-                h[ind+5, ind+bn+7] = i_sqrt2 * sb_1_p
+
                 local_hermit(h, ind, ind+bn+6)
-                local_hermit(h, ind+1, ind+bn+7)
                 local_hermit(h, ind+2, ind+bn+6)
                 local_hermit(h, ind+2, ind+bn+7)
                 local_hermit(h, ind+3, ind+bn+6)
                 local_hermit(h, ind+3, ind+bn+7)
                 local_hermit(h, ind+4, ind+bn+6)
-                local_hermit(h, ind+5, ind+bn+7)
+
 
                 # Sixth line: gamma 7 +1/2
                 h[ind+6, ind+bn+2] = sqrt2*v1
+                h[ind+6, ind+bn+3] = - sqrt3_2 * st_1_p_d
                 h[ind+6, ind+bn+6] = u1
                 h[ind+6, ind+bn+7] = c
 
                 # Seventh line: gamma 7 -1/2
+                h[ind+7, ind+bn+1] = -1j*i_step*i_sqrt12*(p + p_arr[i+1])
+                h[ind+7, ind+bn+2] = - sqrt3_2 * st_1_m_d
                 h[ind+7, ind+bn+3] = - sqrt2*v1
+                h[ind+7, ind+bn+5] = i_sqrt2 * sb_1_p_d
+                h[ind+7, ind+bn+6] = c_d
                 h[ind+7, ind+bn+7] = u1
 
                 # Symmetrize
                 local_hermit(h, ind+6, ind+bn+2)
+                local_hermit(h, ind+6, ind+bn+3)
                 local_hermit(h, ind+6, ind+bn+6)
                 local_hermit(h, ind+6, ind+bn+7)
+                local_hermit(h, ind+7, ind+bn+1)
+                local_hermit(h, ind+7, ind+bn+2)
+                local_hermit(h, ind+7, ind+bn+5)
                 local_hermit(h, ind+7, ind+bn+3)
+                local_hermit(h, ind+7, ind+bn+6)
                 local_hermit(h, ind+7, ind+bn+7)
 
     return h

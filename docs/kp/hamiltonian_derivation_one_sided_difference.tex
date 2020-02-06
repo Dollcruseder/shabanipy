@@ -83,21 +83,21 @@
 		\tilde{m}_0 = \frac{9.109E^{-31} \times 1.6E^{-19}}{(1.055E^{-34})^2 \times 10^{18}} \simeq 13.105
 		$$
 
-	In the implementation to be able to go smoothly from a 4 bands to an 8 bands model, we will write the Hamiltonian using the following order: $\kt|Γ_6,+1/2>, \kt|Γ_6,-1/2>, \kt|Γ_8,+1/2>, \kt|Γ_8,-1/2>, \kt|Γ_8,+3/2>, \kt|Γ_8,-3/2>, \kt|Γ_7,+1/2>, \kt|Γ_7,-1/2>$. Which leads to writing the Hamiltonian as follow:
+	In the implementation to be able to go smoothly from a 4 bands to an 8 bands model, we will write the Hamiltonian using the following order: $\kt|Γ_6,+1/2>,  \kt|Γ_8,+1/2>, \kt|Γ_8,+3/2>, \kt|Γ_7,+1/2>, \kt|Γ_6,-1/2>, \kt|Γ_8,-1/2>, \kt|Γ_8,-3/2>, \kt|Γ_7,-1/2>$. Which leads to writing the Hamiltonian as follow:
 	
 		\begin{equation}
 		    \renewcommand{\arraystretch}{3.5}
 			\label{eq:H0}
 			H^0=
 			\begin{pmatrix}
-				T & 0 &  \sqrt{\frac{1}{6}} \{P, k_z\} &\sqrt{\frac16} P k_- & -\sqrt{\frac12} P k_+  & 0  & -\sqrt{\frac{1}{12}} \{P, k_z\} & -\sqrt{\frac13} P k_-\\
-				0 & T & -\sqrt{\frac16} P k_+ &  \sqrt{\frac{1}{6}} \{P, k_z\} & 0 & \sqrt{\frac12} P k- & -\sqrt{\frac13} P k_+ & \sqrt{\frac{1}{12}} \{P, k_z\}\\
-				\sqrt{\frac{1}{6}} \{P, k_z\} & -\sqrt{\frac16} k_- P & U-V & C & - \overline{S}_-^\dagger & R & \sqrt{2} V & -\sqrt{\frac32} \tilde{S}_- \\
-				\sqrt{\frac16} k_+ P & \sqrt{\frac{1}{6}} \{P, k_z\} & C^\dagger & U-V & R^\dagger & \overline{S}_+^\dagger & -\sqrt{\frac32} \tilde{S}_+ & -\sqrt{2} V \\
-				-\sqrt{\frac12}  k_- P & 0 & -\overline{S}_- & R & U+V & 0 & \sqrt{\frac12} \overline{S}_- & -\sqrt{2} R \\
-				0 & \sqrt{\frac12} k_+ P & R^\dagger & \overline{S}_+ & 0 & U+V & \sqrt{2} R^\dag & \sqrt{\frac12} \overline{S}_+ \\
-				-\sqrt{\frac{1}{12}} \{P, k_z\} & -\sqrt{\frac13} k_- P & \sqrt{2} V & -\sqrt{\frac32} \tilde{S}^\dag_+ & \sqrt{\frac12} \overline{S}^{\dag}_- & \sqrt{2} R & U - Δ & C \\
-				-\sqrt{\frac13} k_+ P & \sqrt{\frac{1}{12}} \{P, k_z\} & -\sqrt{\frac32} \tilde{S}_-^\dag & -\sqrt{2} V & -\sqrt{2} R^\dag & \sqrt{\frac12} \overline{S}_+^\dag & C^\dag & U - Δ
+				T & \sqrt{\frac{1}{6}} \{P, k_z\} & -\sqrt{\frac12} P k_+  & -\sqrt{\frac{1}{12}} \{P, k_z\} & 0 &  \sqrt{\frac16} P k_- & 0  & -\sqrt{\frac13} P k_-\\ 
+				\sqrt{\frac{1}{6}} \{P, k_z\} &  U-V &  - \overline{S}_-^\dagger & \sqrt{2} V & -\sqrt{\frac16} k_- P & C & R & -\sqrt{\frac32} \tilde{S}_- \\ 
+				-\sqrt{\frac12}  k_- P & -\overline{S}_- & U+V &  \sqrt{\frac12} \overline{S}_- & 0 & R & 0 & -\sqrt{2} R \\ 
+				-\sqrt{\frac{1}{12}} \{P, k_z\} & \sqrt{2} V &  \sqrt{\frac12} \overline{S}^{\dag}_- &  U - Δ &-\sqrt{\frac13} k_- P & -\sqrt{\frac32} \tilde{S}^\dag_+ & \sqrt{2} R & C \\ 
+				0 & -\sqrt{\frac16} P k_+ & 0 & -\sqrt{\frac13} P k_+ & T &  \sqrt{\frac{1}{6}} \{P, k_z\} &  \sqrt{\frac12} P k- & \sqrt{\frac{1}{12}} \{P, k_z\}\\ 
+				\sqrt{\frac16} k_+ P & C^\dagger & R^\dagger &  -\sqrt{\frac32} \tilde{S}_+ & \sqrt{\frac{1}{6}} \{P, k_z\} & U-V & \overline{S}_+^\dagger & -\sqrt{2} V \\ 
+				0 & R^\dagger & 0 & \sqrt{2} R^\dag & \sqrt{\frac12} k_+ P & \overline{S}_+ & U+V & \sqrt{\frac12} \overline{S}_+ \\ 
+				-\sqrt{\frac13} k_+ P & -\sqrt{\frac32} \tilde{S}_-^\dag & -\sqrt{2} R^\dag & C^\dag & \sqrt{\frac{1}{12}} \{P, k_z\} & -\sqrt{2} V & \sqrt{\frac12} \overline{S}_+^\dag & U - Δ     
 			\end{pmatrix}
 		\end{equation}
 		
@@ -112,7 +112,25 @@ Then, we can define two representations of gradient $K_R$ and $K_L$:
 			K_L^\dagger = K_R
 		\end{align}
 
-The one-sided differences lead to an asymmetry in the structure of this matrix in the diagonal direction, but we will show that this need not break the physical symmetry of the underlying system. There are two possible conventions: to place $K_L$ operators in the lower triangle, or place $K_R$ operators there. Here we take the first one, replace $k_z$ with $K_R$ in the upper triangle, and replace $k_z$ with $K_L$ in the lower triangle. Then we can get:
+The one-sided differences lead to an asymmetry in the structure of this matrix in the diagonal direction, but we will show that this need not break the physical symmetry of the underlying system. There are two possible conventions: to place $K_L$ operators in the lower triangle, or place $K_R$ operators there. Here we take the first one, replace $k_z$ with $K_R$ in the upper triangle, and replace $k_z$ with $K_L$ in the lower triangle. And to avoid artificial spin splitting, we should interchange forward and backward schemes for different spin groups. Then we can get:
+
+		\begin{equation}
+		    \renewcommand{\arraystretch}{3.5}
+			\label{eq:H0}
+			H^0=
+			\begin{pmatrix}
+				T & \sqrt{\frac{1}{6}} \{P, K_R\} & -\sqrt{\frac12} P k_+  & -\sqrt{\frac{1}{12}} \{P, K_R\} & 0 &  \sqrt{\frac16} P k_- & 0  & -\sqrt{\frac13} P k_-\\ 
+				\sqrt{\frac{1}{6}} \{P, K_L\} &  U-V &  - \overline{S}_{R-}^\dagger & \sqrt{2} V & -\sqrt{\frac16} k_- P & C & R & -\sqrt{\frac32} \tilde{S}_- \\ 
+				-\sqrt{\frac12}  k_- P & -\overline{S}_{L-c} & U+V &  \sqrt{\frac12} \overline{S}_{R-} & 0 & R & 0 & -\sqrt{2} R \\ 
+				-\sqrt{\frac{1}{12}} \{P, K_L\} & \sqrt{2} V &  \sqrt{\frac12} \overline{S}^{\dag}_{L-} &  U - Δ &-\sqrt{\frac13} k_- P & -\sqrt{\frac32} \tilde{S}^\dag_+ & \sqrt{2} R & C \\ 
+				0 & -\sqrt{\frac16} P k_+ & 0 & -\sqrt{\frac13} P k_+ & T &  \sqrt{\frac{1}{6}} \{P, K_L\} &  \sqrt{\frac12} P k- & \sqrt{\frac{1}{12}} \{P, K_L\}\\ 
+				\sqrt{\frac16} k_+ P & C^\dagger & R^\dagger &  -\sqrt{\frac32} \tilde{S}_+ & \sqrt{\frac{1}{6}} \{P, K_R\} & U-V & \overline{S}_{L+}^\dagger & -\sqrt{2} V \\ 
+				0 & R^\dagger & 0 & \sqrt{2} R^\dag & \sqrt{\frac12} k_+ P & \overline{S}_{R+} & U+V & \sqrt{\frac12} \overline{S}_{L+} \\ 
+				-\sqrt{\frac13} k_+ P & -\sqrt{\frac32} \tilde{S}_-^\dag & -\sqrt{2} R^\dag & C^\dag & \sqrt{\frac{1}{12}} \{P, K_R\} & -\sqrt{2} V & \sqrt{\frac12} \overline{S}_{R+}^\dag & U - Δ     
+			\end{pmatrix}
+		\end{equation}
+		
+Then we will write the Hamiltonian using the following order: $\kt|Γ_6,+1/2>, \kt|Γ_6,-1/2>,  \kt|Γ_8,+1/2>, \kt|Γ_8,-1/2>, \kt|Γ_8,+3/2>, \kt|Γ_8,-3/2>, \kt|Γ_7,+1/2>, \kt|Γ_7,-1/2>$. Which leads to writing the Hamiltonian as follow:
 
 		\begin{equation}
 		    \renewcommand{\arraystretch}{3.5}
@@ -120,13 +138,13 @@ The one-sided differences lead to an asymmetry in the structure of this matrix i
 			H^0=
 			\begin{pmatrix}
 				T & 0 &  \sqrt{\frac{1}{6}} \{P, K_R\} &\sqrt{\frac16} P k_- & -\sqrt{\frac12} P k_+  & 0  & -\sqrt{\frac{1}{12}} \{P, K_R\} & -\sqrt{\frac13} P k_-\\
-				0 & T & -\sqrt{\frac16} P k_+ &  \sqrt{\frac{1}{6}} \{P, K_R\} & 0 & \sqrt{\frac12} P k- & -\sqrt{\frac13} P k_+ & \sqrt{\frac{1}{12}} \{P, K_R\}\\
-				\sqrt{\frac{1}{6}} \{P, K_L\} & -\sqrt{\frac16} k_- P & U-V & C_R & - \overline{S}_{R-}^\dagger & R & \sqrt{2} V & -\sqrt{\frac32} \tilde{S}_{R-} \\
-				\sqrt{\frac16} k_+ P & \sqrt{\frac{1}{6}} \{P, K_L\} & C_L^\dagger & U-V & R^\dagger & \overline{S}_{R+}^\dagger & -\sqrt{\frac32} \tilde{S}_{R+} & -\sqrt{2} V \\
+				0 & T & -\sqrt{\frac16} P k_+ &  \sqrt{\frac{1}{6}} \{P, K_L\} & 0 & \sqrt{\frac12} P k- & -\sqrt{\frac13} P k_+ & \sqrt{\frac{1}{12}} \{P, K_L\}\\
+				\sqrt{\frac{1}{6}} \{P, K_L\} & -\sqrt{\frac16} k_- P & U-V & C & - \overline{S}_{R-}^\dagger & R & \sqrt{2} V & -\sqrt{\frac32} \tilde{S}_- \\
+				\sqrt{\frac16} k_+ P & \sqrt{\frac{1}{6}} \{P, K_R\} & C^\dagger & U-V & R^\dagger & \overline{S}_{L+}^\dagger & -\sqrt{\frac32} \tilde{S}_+ & -\sqrt{2} V \\
 				-\sqrt{\frac12}  k_- P & 0 & -\overline{S}_{L-} & R & U+V & 0 & \sqrt{\frac12} \overline{S}_{R-} & -\sqrt{2} R \\
-				0 & \sqrt{\frac12} k_+ P & R^\dagger & \overline{S}_{L+} & 0 & U+V & \sqrt{2} R^\dag & \sqrt{\frac12} \overline{S}_{R+} \\
-				-\sqrt{\frac{1}{12}} \{P, K_L\} & -\sqrt{\frac13} k_- P & \sqrt{2} V & -\sqrt{\frac32} \tilde{S}^\dag_{L+} & \sqrt{\frac12} \overline{S}^{\dag}_{L-} & \sqrt{2} R & U - Δ & C_R \\
-				-\sqrt{\frac13} k_+ P & \sqrt{\frac{1}{12}} \{P, K_L\} & -\sqrt{\frac32} \tilde{S}_{L-}^\dag & -\sqrt{2} V & -\sqrt{2} R^\dag & \sqrt{\frac12} \overline{S}_{L+}^\dag & C_L^\dag & U - Δ
+				0 & \sqrt{\frac12} k_+ P & R^\dagger & \overline{S}_{R+} & 0 & U+V & \sqrt{2} R^\dag & \sqrt{\frac12} \overline{S}_{L+} \\
+				-\sqrt{\frac{1}{12}} \{P, K_L\} & -\sqrt{\frac13} k_- P & \sqrt{2} V & -\sqrt{\frac32} \tilde{S}^\dag_+ & \sqrt{\frac12} \overline{S}^{\dag}_{L-} & \sqrt{2} R & U - Δ & C \\
+				-\sqrt{\frac13} k_+ P & \sqrt{\frac{1}{12}} \{P, K_R\} & -\sqrt{\frac32} \tilde{S}_-^\dag & -\sqrt{2} V & -\sqrt{2} R^\dag & \sqrt{\frac12} \overline{S}_{R+}^\dag & C^\dag & U - Δ
 			\end{pmatrix}
 		\end{equation}
 		
@@ -141,6 +159,8 @@ The one-sided differences lead to an asymmetry in the structure of this matrix i
 			C_R &= \frac{ħ^2 }{m_0} k_- [κ , K_R ]\\
 			C_L^\dagger &= -\frac{ħ^2 }{m_0} k_+ [κ , K_L ]  .
 		\end{align}
+
+
 		
 		The material dependent parameters are taken from Vurgaftman, I., Meyer, J. R. \& Ram-Mohan, L. R. Band parameters for III–V compound semiconductors and their alloys. Journal of Applied Physics 89, 5815–5875 (2001). When not specified the Luttinger parameter $κ$ is computed using $κ = γ_3 + \frac{2}{3} γ_2 - \frac{1}{3} γ_1 - \frac{2}{3}$ (see \url{https://www.nextnano.de/nextnano3/input_parser/database/binary-zb-default.html}).
 
@@ -229,6 +249,12 @@ The one-sided differences lead to an asymmetry in the structure of this matrix i
     We put the model on a fictitious lattice in the $z$ direction : in $x$ and $y$ directions the model remain continuous. The lattice spacing in this $z$ direction is denoted $a$, and we should focus on $k_z \ll a^{-1}$, irrespective of the condition of applicability of the $k.p$ theory.
 
     In order to obtain terms that are hermitic, we will use a symmetric expression of the discrete derivative at first order ($\partial_z ϕ \sim \frac{ϕ_{n+1} - ϕ_{n-1}}{2a}$). However to avoid introducing an artificial elementary cell containing two sites, we will derive second order derivative starting from the discrete derivative on the right ($\partial_z ϕ \sim \frac{ϕ_{n+1} - ϕ_{n}}{a}$).
+    
+    And for $K_R$ ans $K_L$, we use this expression:
+		\begin{align}
+			(K_Rf)_n = -\frac{i}{a} \left(f_{n+1} - f_n\right)	\\
+			(K_Lf)_n = -\frac{i}{a} \left(f_n - f_{n-1}\right)
+		\end{align}	
 
     \subsubsection{$k_z$}
 
@@ -282,6 +308,19 @@ The one-sided differences lead to an asymmetry in the structure of this matrix i
 
 	\subsubsection{$[κ(z),k]$}
 
+		\begin{align}
+			\mv< ψ | [κ(z),k_z] | ϕ >
+			&= \int_{z} \overline{ψ}(z) \left( κ(z)(-i\partial_z) +i\partial_z κ(z) \right)ϕ(z) \nonumber\\
+			&=-i\int_{z} \overline{ψ}(z)  κ(z)\partial_z  ϕ(z) -i\int_{z} \partial_z \left(\overline{ψ}(z)\right)  κ(z)ϕ(z) \nonumber\\
+			&=-i\sum_n \overline{ψ}_n κ_n \frac{1}{2a}\left(ϕ_{n+1} - ϕ_{n-1}\right) -i\sum_n \frac{1}{2a}\left( \overline{ψ}_{n+1}-\overline{ψ}_{n-1}\right)κ_nϕ_n \nonumber\\
+			&= \frac{i}{2a} \sum_n \overline{ψ}_n \left[\left(κ_{n+1}-κ_{n} \right)ϕ_{n+1} + \left(κ_{n}-κ_{n-1} \right)ϕ_{n-1}\right]
+		\end{align}
+		hence
+		\begin{align}
+			h_{n,n+1} &= \frac{i}{2a} (κ_{n+1}-κ_{n})\\
+			h_{n,n-1}  &= \frac{i}{2a} (κ_n - κ_{n-1})
+		\end{align}
+
 
 		In the calculation of $[\kappa, k_z]$ and $\{\gamma, k_z\}$, we can replace the $k_z$ with $K_R$ and $K_L$. Then we can get:	
 		\begin{align}
@@ -313,6 +352,20 @@ The one-sided differences lead to an asymmetry in the structure of this matrix i
 
 
 	\subsubsection{$\left\{γ(z),k\right\}$}
+
+		\begin{align}
+			\mv< ψ | \left\{γ(z),k_z\right\} | ϕ >
+			&=-i\int_{z} \overline{ψ}(z)  γ(z)(\partial_z  ϕ(z)) + i\int_{z} (\partial_z \left(\overline{ψ}(z)\right)  γ(z)ϕ(z) \nonumber\\
+			&=-i\sum_n \overline{ψ}_n γ_n \frac{1}{2a}\left(ϕ_{n+1} - ϕ_{n-1}\right) +i\sum_n \frac{1}{2a}\left( \overline{ψ}_{n+1}-\overline{ψ}_{n-1}\right)γ_nϕ_n \nonumber\\
+			&= \frac{i}{2a} \sum_n \overline{ψ}_n \left[-\left(γ_{n}+γ_{n+1} \right)ϕ_{n+1} + \left(γ_{n}+γ_{n-1} \right)ϕ_{n-1}\right]
+		\end{align}
+
+		hence
+
+		\begin{align}
+			h_{n,n+1} &= -\frac{i}{2a} (γ_{n}+γ_{n+1})\\
+			h_{n,n-1}  &= \frac{i}{2a} (γ_n + γ_{n-1})
+		\end{align}
 
 		\begin{align}
 			\mv< ψ | \left\{γ(z),K_R\right\} | ϕ >
@@ -356,13 +409,13 @@ The one-sided differences lead to an asymmetry in the structure of this matrix i
 	    H_{main}[i] =
 	    \begin{pmatrix}
 			T_0[i] & 0 & \sqrt{\frac23} \frac{i}{a} P &\sqrt{\frac16} P k_- &  -\sqrt{\frac12} P k_+  & 0  & -\sqrt{\frac13}\frac{i}{a} P & -\sqrt{\frac13} P k_-\\
-			0 & T_0[i] & -\sqrt{\frac16} P k_+ &  \sqrt{\frac23} \frac{i}{a} P & 0 & \sqrt{\frac12} P k- & -\sqrt{\frac13} P k_+ & \sqrt{\frac13} \frac{i}{a} P\\
-			-\sqrt{\frac23} \frac{i}{a} P & -\sqrt{\frac16} k_- P &  U_0[i] - V_0[i] & 0 & - \overline{S}_{R-,0}^ \dagger [i] & R & \sqrt{2} V_0[i] & - \sqrt{\frac32} \tilde{S}_{R-,0}[i] \\
-			\sqrt{\frac16} k_+ P & -\sqrt{\frac23} \frac{i}{a} P & 0 & U_0[i] - V_0[i] & R^\dagger & \overline{S}_{R+,0}^\dagger [i] & - \sqrt{\frac32} \tilde{S}_{R+,0}[i] & -\sqrt{2} V_0[i]\\
+			0 & T_0[i] & -\sqrt{\frac16} P k_+ &  -\sqrt{\frac23} \frac{i}{a} P & 0 & \sqrt{\frac12} P k- & -\sqrt{\frac13} P k_+ & -\sqrt{\frac13} \frac{i}{a} P\\
+			-\sqrt{\frac23} \frac{i}{a} P & -\sqrt{\frac16} k_- P &  U_0[i] - V_0[i] & 0 & - \overline{S}_{R-,0}^ \dagger [i] & R & \sqrt{2} V_0[i] & 0 \\
+			\sqrt{\frac16} k_+ P & \sqrt{\frac23} \frac{i}{a} P & 0 & U_0[i] - V_0[i] & R^\dagger & \overline{S}_{L+,0}^\dagger [i] & 0 & -\sqrt{2} V_0[i]\\
 			-\sqrt{\frac12}  k_- P & 0 & - \overline{S}_{L-,0}[i] & R & U_0[i] + V_0[i] & 0  & \sqrt{\frac12} \overline{S}_{R-,0}[i] & -\sqrt2 R\\
-			0 & \sqrt{\frac12} k_+ P & R^\dagger & \overline{S}_{L+,0}[i] & 0 &  U_0[i] + V_0[i] & \sqrt{2} R^\dag & \sqrt{\frac12} \overline{S}_{R+,0}[i] \\
-			\sqrt{\frac13} \frac{i}{a} P & -\sqrt{\frac13} k_- P & \sqrt{2} V_0[i] & - \sqrt{\frac32} \tilde{S}_{L+,0}^\dagger [i] & \sqrt{\frac12} \overline{S}_{L-,0}^\dagger [i] & \sqrt2 R & U_0[i] - Δ & 0\\
-			-\sqrt{\frac13} k_+ P & -\sqrt{\frac13} \frac{i}{a} P & - \sqrt{\frac32} \tilde{S}_{L-,0}^\dagger [i] & -\sqrt{2} R^\dag & -\sqrt{2} V_0[i] & \sqrt{\frac12} \overline{S}_{L+,0}^\dagger [i] & 0 & U_0[i] - Δ
+			0 & \sqrt{\frac12} k_+ P & R^\dagger & \overline{S}_{R+,0}[i] & 0 &  U_0[i] + V_0[i] & \sqrt{2} R^\dag & \sqrt{\frac12} \overline{S}_{L+,0}[i] \\
+			\sqrt{\frac13} \frac{i}{a} P & -\sqrt{\frac13} k_- P & \sqrt{2} V_0[i] & 0 & \sqrt{\frac12} \overline{S}_{L-,0}^\dagger [i] & \sqrt2 R & U_0[i] - Δ & 0\\
+			-\sqrt{\frac13} k_+ P & \sqrt{\frac13} \frac{i}{a} P & 0 & -\sqrt{2} V_0[i] & -\sqrt{2} R^\dag & \sqrt{\frac12} \overline{S}_{R+,0}^\dagger [i] & 0 & U_0[i] - Δ
 		\end{pmatrix}
     \end{equation}
 
@@ -376,39 +429,37 @@ The one-sided differences lead to an asymmetry in the structure of this matrix i
 		 \overline{S}_{L\pm,0}^\dagger[i] &= \frac{ħ^2}{m_0} \sqrt{3} k_\mp \frac{i}{a} γ_3[i] = \overline{S}_{R\pm,0}^*[i]\\
 		 \overline{S}_{R\pm,0}^\dagger[i] &= -\frac{ħ^2}{m_0} \sqrt{3} k_\mp \frac{i}{a} γ_3[i]\\
 		 \overline{S}_{L\pm,0}[i] &= \frac{ħ^2}{m_0} \sqrt{3} k_\pm \frac{i}{a} γ_3[i] = \overline{S}_{R\pm,0}^{\dagger*}[i]\\
-		 \tilde{S}_{R\pm,0} [i] &= -\frac{ħ^2}{m_0} \sqrt{3} k_\pm \frac{i}{a} γ_3[i]\\
-		 \tilde{S}_{L\pm,0}^\dagger [i] &= \frac{ħ^2}{m_0} \sqrt{3} k_\mp \frac{i}{a} γ_3[i]=\tilde{S}_{R\pm,0}^* [i]
 	\end{align}
-
 
 	\paragraph{Upper diagonal:\\}
 	When computing the contribution of conjugated terms one has to be careful since even if globally the Hamiltonian is hermitian each term independently is not. In particular, we have:
 
 	\begin{align}
-	    C_R = \frac{ħ^2 }{m_0} k_- [κ , K_R ] &\rightarrow C[i, i+1] =  \frac{ħ^2}{m_0} k_-\,\dfrac{i}{a}\left(κ[i+1]-κ[i]\right) \\
-	    C_L^\dag = - \frac{ħ^2}{m_0} k_+ [κ , K_L] &\rightarrow C^\dag[i, i+1] = 0\\
+	    C = \frac{ħ^2 }{m_0} k_- [κ , k_z ] &\rightarrow C[i, i+1] =  \frac{ħ^2}{m_0} k_-\,\dfrac{i}{2a}\left(κ[i+1]-κ[i]\right) \\
+	    C^\dag = - \frac{ħ^2}{m_0} k_+ [κ , k_z] &\rightarrow C^\dag[i, i+1] = -\frac{ħ^2}{m_0} k_+\,\dfrac{i}{2a}\left(κ[i+1]-κ[i]\right)\\
 	    \overline{S}_{R\pm} = -\frac{ħ^2}{2\,m_0} \sqrt{3}  k_\pm \Big( \{ γ_3 , K_R \} + [κ , K_R] \Big) &\rightarrow \overline{S}_{R\pm}[i, i+1] = \frac{ħ^2}{2\,m_0} \sqrt{3}  k_\pm \frac{i}{a} \left(γ_3[i] + γ_3[i+1]-κ[i+1]+κ[i]\right)\\
 	    \overline{S}_{R\pm}^\dagger = -\frac{ħ^2}{2\,m_0} \sqrt{3}  k_\mp \Big( \{ γ_3 , K_R \} - [κ , K_R] \Big) &\rightarrow \overline{S}_{R\pm}^\dagger[i, i+1] = \frac{ħ^2}{2\,m_0} \sqrt{3}  k_\mp \frac{i}{a} \left(γ_3[i] + γ_3[i+1]+κ[i+1]-κ[i]\right)\\
 	    \overline{S}_{L\pm} = - \frac{ħ^2}{2\,m_0} \sqrt{3}  k_\pm \Big( \{ γ_3 , K_L \} + [κ , K_L] \Big) &\rightarrow \overline{S}^\dag_{L\pm}[i, i+1] = 0\\
 	    \overline{S}^\dag_{L\pm} = - \frac{ħ^2}{2\,m_0} \sqrt{3}  k_\mp \Big( \{ γ_3 , K_L \} - [κ , K_L] \Big) &\rightarrow \overline{S}^\dag_{L\pm}[i, i+1] = 0\\
-	    \tilde{S}_{R\pm} = - \frac{ħ^2 }{2\,m_0} \sqrt{3}  k_\pm \Big( \{ γ_3 , K_R \} - \frac13 [κ , K_R] \Big) &\rightarrow \tilde{S}_{R\pm}[i, i+1] = \frac{ħ^2}{2\,m_0} \sqrt{3}  k_\pm \frac{i}{a} \left(γ_3[i] + γ_3[i+1] + \frac13 κ[i+1] - \frac13 κ[i]\right)\\
-	    \tilde{S}_{L\pm}^\dag = - \frac{ħ^2 }{2\,m_0} \sqrt{3}  k_\mp \Big( \{ γ_3 , K_L \} + \frac13 [κ , K_L] \Big) &\rightarrow \tilde{S}_{L\pm}^\dag[i, i+1] = 0
+	    \tilde{S}_{\pm} = - \frac{ħ^2 }{2\,m_0} \sqrt{3}  k_\pm \Big( \{ γ_3 , k_z \} - \frac13 [κ , k_z] \Big) &\rightarrow \tilde{S}_{R\pm}[i, i+1] = \frac{ħ^2}{2\,m_0} \sqrt{3}  k_\pm \frac{i}{2a} \left(γ_3[i] + γ_3[i+1] + \frac13 κ[i+1] - \frac13 κ[i]\right)\\
+	    \tilde{S}_{\pm}^\dagger = - \frac{ħ^2 }{2\,m_0} \sqrt{3}  k_\mp \Big( \{ γ_3 , k_z \} + \frac13 [κ , k_z] \Big) &\rightarrow \tilde{S}_{R\pm}[i, i+1] = \frac{ħ^2}{2\,m_0} \sqrt{3}  k_\mp \frac{i}{2a} \left(γ_3[i] + γ_3[i+1] - \frac13 κ[i+1] + \frac13 κ[i]\right)	 	    
 	\end{align}
 
 	Paying a close attention to the above one can write:
+
 
 	\begin{equation}
 	    \renewcommand{\arraystretch}{3.5}
 	    H_{up} = 
 	    \begin{pmatrix}
 			T_1[i] & 0 & \sqrt{\frac16} \{P,K_R\} & 0 & 0 & 0 & - \sqrt{\frac{1}{12}} \{P,K_R\} & 0 \\
-			0 & T_1[i] & 0 & -\sqrt{\frac16} \{P,K_R\} & 0 & 0 & 0 & \sqrt{\frac{1}{12}} \{P,K_R\}\\
-			0 & 0 & U_1[i] - V_1[i] & C_R[i] & -\overline{S}_{R-,1}^\dagger[i] & 0 & \sqrt{2} V_1[i] & -\sqrt{\frac32} \tilde{S}_{R-,1}[i] \\
-			0 & 0 & 0 & U_1[i] - V_1[i] & 0 & \overline{S}_{R+,1}^\dagger[i] & -\sqrt{\frac32} \tilde{S}_{R+,1}[i] & -\sqrt{2} V_1[i]\\
+			0 & T_1[i] & 0 & 0 & 0 & 0 & 0 & 0\\
+			0 & 0 & U_1[i] - V_1[i] & C[i] & -\overline{S}_{R-,1}^\dagger[i] & 0 & \sqrt{2} V_1[i] & -\sqrt{\frac32} \tilde{S}_{-,1}[i] \\
+			0 & \sqrt{\frac16} \{P,K_R\} & C^\dagger[i] & U_1[i] - V_1[i] & 0 & 0 & -\sqrt{\frac32} \tilde{S}_{+,1}[i] & -\sqrt{2} V_1[i]\\
 			0 & 0 & 0 & 0 & U_1[i] + V_1[i] & 0 & \sqrt{\frac12} \overline{S}_{R-,1}[i] & 0\\
-			0 & 0 & 0 & 0 & 0 & U_1[i] + V_1[i] & 0 &  \sqrt{\frac12} \overline{S}_{R+,1}[i]  \\
-			0 & 0 & \sqrt{2} V_1[i] & 0 & 0 & 0 & U_1[i] & C_R[i] \\
-			0 & 0 & 0 & -\sqrt{2} V_1[i] &  0 & 0 & 0 & U_1[i]
+			0 & 0 & 0 & \overline{S}_{R+,1}[i] & 0 & U_1[i] + V_1[i] & 0 &  0  \\
+			0 & 0 & \sqrt{2} V_1[i] & -\sqrt{\frac32} \tilde{S}_{+,1}^\dagger[i] & 0 & 0 & U_1[i] & C[i] \\
+			0 & \sqrt{\frac{1}{12}} \{P,K_R\} & -\sqrt{\frac32} \tilde{S}_{-,1}^\dagger[i] & -\sqrt{2} V_1[i] &  0 & \sqrt{\frac12} \overline{S}_{R+,1}^\dagger[i] & C^\dagger[i] & U_1[i]
  		\end{pmatrix}
     \end{equation}
 
@@ -422,12 +473,13 @@ The one-sided differences lead to an asymmetry in the structure of this matrix i
 		&= \frac{ħ^2}{2\,m_0} \sqrt{3}  k_\pm \frac{i}{a} \left(γ_3[i] + γ_3[i+1]-κ[i+1]+κ[i]\right)\\
 		\overline{S}_{R\pm,1}^\dagger[i]
 		&= \frac{ħ^2}{2\,m_0} \sqrt{3}  k_\mp \frac{i}{a} \left(γ_3[i] + γ_3[i+1]+κ[i+1]-κ[i]\right)\\
-		\tilde{S}_{R\pm,1}[i]
-		&= \frac{ħ^2}{2\,m_0} \sqrt{3}  k_\pm \frac{i}{a} \left(γ_3[i] + γ_3[i+1] + \frac13 κ[i+1] - \frac13 κ[i]\right)\\
-		C_R[i] &= \frac{ħ^2}{m_0} k_-\,\dfrac{i}{a}\left(κ[i+1]-κ[i]\right)		
+		\tilde{S}_{\pm,1}[i]
+		&= \frac{ħ^2}{2\,m_0} \sqrt{3}  k_\pm \frac{i}{2a} \left(γ_3[i] + γ_3[i+1] + \frac13 κ[i+1] - \frac13 κ[i]\right)\\
+		\tilde{S}_{\pm,1}^\dagger[i]
+		&= \frac{ħ^2}{2\,m_0} \sqrt{3}  k_\mp \frac{i}{2a} \left(γ_3[i] + γ_3[i+1] - \frac13 κ[i+1] + \frac13 κ[i]\right)\\
+		C[i] &= \frac{ħ^2}{m_0} k_-\,\dfrac{i}{2a}\left(κ[i+1]-κ[i]\right)	\\
+		C^\dagger[i] &= -\frac{ħ^2}{m_0} k_+\,\dfrac{i}{2a}\left(κ[i+1]-κ[i]\right)		
 	\end{align}
-
-
 
 
 \section{Parameter interpolation:}
